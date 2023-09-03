@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>异步编程 | 知识就是力量</title><meta name="author" content="刘嘉骅"><meta name="copyright" content="刘嘉骅"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="关于线程默认情况下一个进程只包含一个线程。线程可以派生其他线程，因此在任意时刻，一个进程可能包含不同状态的多个线程，它们执行程序的不同部分。如果一个进程拥有多个线程，它们将共享进程的资源。系统为处理器执行所调度的单元是线程，不是进程。 异步编程演示异步获取百度的html然后异步写入test.txt文件中。 12345678910namespace Test &amp;#123;    internal c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异步编程">
+<meta property="og:url" content="https://loveautumu.github.io/BLog/2023/08/30/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="知识就是力量">
+<meta property="og:description" content="关于线程默认情况下一个进程只包含一个线程。线程可以派生其他线程，因此在任意时刻，一个进程可能包含不同状态的多个线程，它们执行程序的不同部分。如果一个进程拥有多个线程，它们将共享进程的资源。系统为处理器执行所调度的单元是线程，不是进程。 异步编程演示异步获取百度的html然后异步写入test.txt文件中。 12345678910namespace Test &amp;#123;    internal c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://loveautumu.github.io/BLog/images/avatar.jpg">
+<meta property="article:published_time" content="2023-08-30T12:27:17.000Z">
+<meta property="article:modified_time" content="2023-08-30T12:34:07.734Z">
+<meta property="article:author" content="刘嘉骅">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content=".Net">
+<meta property="article:tag" content="异步编程">
+<meta property="article:tag" content="async">
+<meta property="article:tag" content="await">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://loveautumu.github.io/BLog/images/avatar.jpg"><link rel="shortcut icon" href="/BLog/images/avatar.jpg"><link rel="canonical" href="https://loveautumu.github.io/BLog/2023/08/30/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/BLog/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/BLog/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '异步编程',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-30 20:34:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/BLog/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/BLog/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/BLog/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/BLog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/BLog/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/BLog/images/top_img.webp')"><nav id="nav"><span id="blog-info"><a href="/BLog/" title="知识就是力量"><span class="site-name">知识就是力量</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/BLog/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/BLog/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">异步编程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-30T12:27:17.000Z" title="发表于 2023-08-30 20:27:17">2023-08-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-30T12:34:07.734Z" title="更新于 2023-08-30 20:34:07">2023-08-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/BLog/categories/C-Net/">C#.Net</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="异步编程"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="关于线程"><a href="#关于线程" class="headerlink" title="关于线程"></a>关于线程</h2><p>默认情况下一个进程只包含一个线程。<br>线程可以派生其他线程，因此在任意时刻，一个进程可能包含不同状态的多个线程，它们执行程序的不同部分。<br>如果一个进程拥有多个线程，它们将共享进程的资源。<br>系统为处理器执行所调度的单元是线程，不是进程。</p>
+<h2 id="异步编程演示"><a href="#异步编程演示" class="headerlink" title="异步编程演示"></a>异步编程演示</h2><p>异步获取百度的html然后异步写入test.txt文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">namespace Test &#123;</span><br><span class="line">    internal class Program &#123;     </span><br><span class="line">        static async Task Main(string[] args) &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            string str = await client.GetStringAsync(@&quot;https:\\www.baidu.com&quot;);</span><br><span class="line">            string fileName = @&quot;F:\test.txt&quot;;</span><br><span class="line">            await File.WriteAllTextAsync(fileName,str);   </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>异步方法在其完成所有工作之前就返回到调用方法。<br>主函数调用异步方法，然后主函数在异步方法执行时继续执行（可能在相同的线程也可能在不同的线程）<br>async：声明这种方法是异步的。<br>await：在异步方法内等待。</p>
+<h2 id="异步方法的注意点"><a href="#异步方法的注意点" class="headerlink" title="异步方法的注意点"></a>异步方法的注意点</h2><p>异步方法头中用async修饰符，即使返回结果为空也应该将结果声明为Task.<br>异步方法包含一个或多个await。<br>异步方法必须返回void、Task、Task&lt;T&gt;、ValueTask&lt;T&gt;的其中之一。<br>异步方法应具有公开可访问的GetAwaiter方法类型。<br>异步方法名称一般以Async为后缀。<br>Lambda表达式和匿名方法也可以作为异步对象。</p>
+<h2 id="await"><a href="#await" class="headerlink" title="await"></a>await</h2><p>await操作符帮我们提供异步等待，并且可以将Task&lt;T&gt;所封装的真实值取出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static async Task Main(string[] args) &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            //不用await帮忙，我就要自己取</span><br><span class="line">            Task&lt;string&gt; str1 = client.GetStringAsync(@&quot;https:\\www.baidu.com&quot;);</span><br><span class="line">            await Console.Out.WriteLineAsync(str1.Result);</span><br><span class="line">            //await帮我取值</span><br><span class="line">            string str2 = await client.GetStringAsync(@&quot;https:\\www.baidu.com&quot;);</span><br><span class="line">            await Console.Out.WriteLineAsync(str2);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>await表达式制订了一个异步执行的任务，这个任务可能是Task也可能不是，默认情况下这个任务在当前线程上异步运行。<br>一个空闲对象既是一个awaitable类型的实例，awaitable类型是指包含GetAwaiter方法的类型，该方法没有参数，返回一个awaiter类型的对象。awaiter类型包含以下成员：<br>bool IsCompleted{get}<br>void OnCompleted(Action);<br>还包含以下成员之一：<br>void GetResult();<br>T GetResult();<br>实际上，你不需要构建自己的awaitable，相反，你应该使用Task或ValueTask类，它们是awaitable类型</p>
+<h2 id="Task-Run"><a href="#Task-Run" class="headerlink" title="Task.Run"></a>Task.Run</h2><p>异步方法不等于多线程，异步方法的代码并不会自动在新线程中执行，除非把代码放到新线程中执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;     </span><br><span class="line">        static async Task Main(string[] args) &#123;</span><br><span class="line">            Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">            await Repeat(100);</span><br><span class="line">            Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">        &#125;</span><br><span class="line">        static async Task&lt;int&gt; Repeat(int times) &#123;</span><br><span class="line">            int i = 0;</span><br><span class="line">            for(int j = 0; j &lt; times; j++) &#123;</span><br><span class="line">                i = i + j;</span><br><span class="line">            &#125;</span><br><span class="line">            Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">            return i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Task.Run()方法可以创建一个Task，并且在不同线程上运行你的方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">static async Task Main(string[] args) &#123;</span><br><span class="line">            Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">            await Repeat(100);</span><br><span class="line">            Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">        &#125;</span><br><span class="line">        static async Task&lt;int&gt; Repeat(int times) &#123;</span><br><span class="line">            return await Task.Run(() =&gt; &#123;</span><br><span class="line">                int i = 0;</span><br><span class="line">                for (int j = 0; j &lt; times; j++) &#123;</span><br><span class="line">                    i = i + j;</span><br><span class="line">                &#125;</span><br><span class="line">                Console.WriteLine(&quot;ThreadID：&#123;0&#125;&quot;, Thread.CurrentThread.ManagedThreadId);</span><br><span class="line">                return i;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>它接受一个委托，委托类型可以是：<br><img src="/BLog/images/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/1.jpg"></p>
+<h2 id="为什么有些异步方法没标async"><a href="#为什么有些异步方法没标async" class="headerlink" title="为什么有些异步方法没标async"></a>为什么有些异步方法没标async</h2><p>如果不需要传递异步结果，不需要包装成Task，就没必要async，在哪await都是await。<br>这样写对优化有帮助。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static async Task Main(string[] args) &#123;</span><br><span class="line">            string str = await GetBaidu();</span><br><span class="line">            await Console.Out.WriteLineAsync(str);</span><br><span class="line">        &#125;</span><br><span class="line">        static  Task&lt;string&gt; GetBaidu() &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            return client.GetStringAsync(&quot;https://www.baidu.com&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="取消异步操作CancellationToken和CancellationTokenSource"><a href="#取消异步操作CancellationToken和CancellationTokenSource" class="headerlink" title="取消异步操作CancellationToken和CancellationTokenSource"></a>取消异步操作CancellationToken和CancellationTokenSource</h2><p>位于System.Threading.Tasks名称空间下。<br>很多异步方法都有CancellationToken参数用于获得提前终止执行的信号。<br>CancellationToken是一个结构体，它包含着一个任务是否应被取消的信息。<br>拥有CancellationToken对象的任务应定期检查其令牌状态也就是IsCancellationRequested属性是否为true，任务需停止其操作并返回。<br>CancellationToken是不可逆的只能使用一次。<br>CancellationTokenSource对象创建可分配给不同任务的CancellationToken对象。任何持有CancellationTokenSource的对象都可以调用其Cancel方法，这会将CancellationToken的IsCancellationRequested设置为true。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;     </span><br><span class="line">        static async Task Main(string[] args) &#123;</span><br><span class="line">            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();</span><br><span class="line">            CancellationToken token = cancellationTokenSource.Token;</span><br><span class="line">            cancellationTokenSource.CancelAfter(3000);</span><br><span class="line">            Task&lt;int&gt; res = GetBaidu(token);</span><br><span class="line">            while (true) &#123;</span><br><span class="line">                if (Console.ReadLine() != &quot;p&quot;) &#123;</span><br><span class="line">                &#125;</span><br><span class="line">                cancellationTokenSource.Cancel();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        static async Task&lt;int&gt; GetBaidu(CancellationToken token) &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            for(int i = 0; i &lt; 65533; i++) &#123;</span><br><span class="line">                if(token.IsCancellationRequested) &#123;</span><br><span class="line">                    await Console.Out.WriteLineAsync(&quot;请求被取消&quot;);</span><br><span class="line">                    return 1;</span><br><span class="line">                &#125;</span><br><span class="line">                string str = await client.GetStringAsync(&quot;https://www.baidu.com&quot;);</span><br><span class="line">                await Console.Out.WriteLineAsync(str);</span><br><span class="line">            &#125;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="同步等待任务"><a href="#同步等待任务" class="headerlink" title="同步等待任务"></a>同步等待任务</h2><p>可以使用task对象的Wait()方法在调用方法中同步等待：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static async Task Main(string[] args) &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            Task&lt;string&gt; t = client.GetStringAsync(&quot;https://www.baidu.com&quot;);</span><br><span class="line">            t.Wait();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Task.WaitAll()静态方法用于等待一组任务都完成<br>Task.WaitAny()静态方法用于等待一组任务中的某一个完成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static async Task Main(string[] args) &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            Task&lt;string&gt; t1 = client.GetStringAsync(&quot;https://www.baidu.com&quot;);</span><br><span class="line">            Task t2 = File.ReadAllTextAsync(@&quot;F:\test.txt&quot;);</span><br><span class="line">            //Task.WaitAll(t1, t2);</span><br><span class="line">            Task.WaitAny(t1, t2);</span><br><span class="line">            Console.WriteLine($&quot;t1是否完成:&#123;t1.IsCompleted&#125;,t2是否完成&#123;t2.IsCompleted&#125;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>它们的重载还有：<br><img src="/BLog/images/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/2.jpg"></p>
+<h2 id="在异步方法中异步等待"><a href="#在异步方法中异步等待" class="headerlink" title="在异步方法中异步等待"></a>在异步方法中异步等待</h2><p>有时在异步方法中，你会希望用await表达式来等待Task，这时异步方法会返回调用方法，但该异步方法会等待一个或所有任务完成。可以通过Task.WhenAll()和Task.WhenAny()来实现。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;     </span><br><span class="line">        static async Task Main(string[] args) &#123;</span><br><span class="line">            await Test();</span><br><span class="line">        &#125;</span><br><span class="line">        static async Task Test() &#123;</span><br><span class="line">            HttpClient client = new HttpClient();</span><br><span class="line">            Task&lt;string&gt; t1 = client.GetStringAsync(&quot;https://www.baidu.com&quot;);</span><br><span class="line">            Task t2 = File.ReadAllTextAsync(@&quot;F:\test.txt&quot;);</span><br><span class="line">            //await Task.WhenAll(t1, t2);</span><br><span class="line">            await Task.WhenAny(t1, t2);</span><br><span class="line">            await Console.Out.WriteLineAsync($&quot;t1是否完成:&#123;t1.IsCompleted&#125;,t2是否完成&#123;t2.IsCompleted&#125;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Task-Delay"><a href="#Task-Delay" class="headerlink" title="Task.Delay"></a>Task.Delay</h2><p>该方法创建Task对象，将对象暂停在其线程中，一定时间后再完成，该方法不会阻塞主线程.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Task.Delay(3000);</span><br></pre></td></tr></table></figure>
+
+<h2 id="GUI程序中的异步"><a href="#GUI程序中的异步" class="headerlink" title="GUI程序中的异步"></a>GUI程序中的异步</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private void Button_Click(object sender, RoutedEventArgs e) &#123;</span><br><span class="line">            this.input.Text = &quot;Watting&quot;;</span><br><span class="line">            this.btn.IsEnabled = false;</span><br><span class="line">            Thread.Sleep(4000);</span><br><span class="line">            this.input.Text = &quot;没有任务&quot;;</span><br><span class="line">            this.btn.IsEnabled = true;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在wpf中当点击按钮，文本框文字没有改变，按钮也没有被禁用，但是页面卡住了三秒，期间无法拖动也无法进行其他活动。<br>原因是GUI需要处理很多事情，当点击按钮时，按钮的Click被放入消息队列，消息泵从队列中移除该消息并开始执行事件处理函数。事件处理函数将改变文本框文字、禁用按钮、移动窗体、改变文本框文字、启用按钮放入消息泵，消息泵还未刷新页面时，被Thread.Sleep()阻塞了主线程，当三秒之后再处理消息泵的内容，但是这一切发生的太快。<br>将上述代码修改如下即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private async void Button_Click(object sender, RoutedEventArgs e) &#123;</span><br><span class="line">            this.input.Text = &quot;Watting&quot;;</span><br><span class="line">            this.btn.IsEnabled = false;</span><br><span class="line">            await Task.Delay(4000);          </span><br><span class="line">            this.input.Text = &quot;没有任务&quot;;</span><br><span class="line">            this.btn.IsEnabled = true;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Task-Yield"><a href="#Task-Yield" class="headerlink" title="Task.Yield"></a>Task.Yield</h2><p>该方法创建一个立即返回的awaitable。等待一个Yield可以让异步方法在执行后续部分的同时返回到调用方法，可以将其理解成李凯当前的消息队列、回到队伍末尾、让处理器有时间处理其他任务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            Task&lt;int&gt; value = DoStuff.FindSeriesSum(100000);</span><br><span class="line">            CountBig(100000); CountBig(100000);</span><br><span class="line">            CountBig(100000); CountBig(100000);</span><br><span class="line">            Console.WriteLine($&quot;Sum:&#123;value.Result&#125;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        private static void CountBig(int value) &#123;</span><br><span class="line">            for (int i = 0; i &lt; value; i++) &#123; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    static class DoStuff &#123;</span><br><span class="line">        public static async Task&lt;int&gt;FindSeriesSum(int i1) &#123;</span><br><span class="line">            int sum = 0;</span><br><span class="line">            for(int i = 0; i &lt; i1; i++) &#123;</span><br><span class="line">                sum += i;</span><br><span class="line">                if(i%1000 ==0)await Task.Yield();</span><br><span class="line">            &#125;</span><br><span class="line">            return sum;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Yield方法在GUI程序中非常有用，可以中断大量工作，让其他任务使用处理器。</p>
+<h2 id="异步Lambda表达式"><a href="#异步Lambda表达式" class="headerlink" title="异步Lambda表达式"></a>异步Lambda表达式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Button.Click+=async(sender,e)=&gt;&#123;...&#125;;</span><br></pre></td></tr></table></figure>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/BLog/tags/C/">C#</a><a class="post-meta__tags" href="/BLog/tags/Net/">.Net</a><a class="post-meta__tags" href="/BLog/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">异步编程</a><a class="post-meta__tags" href="/BLog/tags/async/">async</a><a class="post-meta__tags" href="/BLog/tags/await/">await</a></div><div class="post_share"><div class="social-share" data-image="/BLog/images/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/BLog/2023/08/30/LINQ/" title="LINQ"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LINQ</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/BLog/2023/08/28/ArrayList%E7%B1%BB/" title="ArrayList类"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">ArrayList类</div></div></a></div><div><a href="/BLog/2023/08/30/LINQ/" title="LINQ"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-30</div><div class="title">LINQ</div></div></a></div><div><a href="/BLog/2023/08/28/%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0/" title="函数的参数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">函数的参数</div></div></a></div><div><a href="/BLog/2023/08/28/Dictionary%E5%AD%97%E5%85%B8/" title="Dictionary字典"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">Dictionary字典</div></div></a></div><div><a href="/BLog/2023/08/30/%E5%8D%8F%E5%8F%98%E4%B8%8E%E9%80%86%E5%8F%98/" title="协变与逆变"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-30</div><div class="title">协变与逆变</div></div></a></div><div><a href="/BLog/2023/08/29/%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0/" title="匿名函数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-29</div><div class="title">匿名函数</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/BLog/images/avatar.jpg" onerror="this.onerror=null;this.src='/BLog/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">刘嘉骅</div><div class="author-info__description">绝不平凡</div></div><div class="card-info-data site-data is-center"><a href="/BLog/archives/"><div class="headline">文章</div><div class="length-num">22</div></a><a href="/BLog/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/BLog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最近在学C#和Asp.net core，会多分享一些学习进度。C#参考了刘铁猛老师和杨中科老师的教学视频，感谢两位老师的无私奉献让我可以学习到这门编程语言，参考书籍推荐《C#图解教程》《ASP.NET Core技术内幕与项目实战》都是很好的学习用书。JavaScript参考了阮一峰老师的《ES6标准入门》和博客，内容干货很多，非常适合想要深入学习JS的朋友。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">关于线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%BC%94%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">异步编程演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E6%96%B9%E6%B3%95%E7%9A%84%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">异步方法的注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#await"><span class="toc-number">4.</span> <span class="toc-text">await</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task-Run"><span class="toc-number">5.</span> <span class="toc-text">Task.Run</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E4%BA%9B%E5%BC%82%E6%AD%A5%E6%96%B9%E6%B3%95%E6%B2%A1%E6%A0%87async"><span class="toc-number">6.</span> <span class="toc-text">为什么有些异步方法没标async</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%96%E6%B6%88%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9CCancellationToken%E5%92%8CCancellationTokenSource"><span class="toc-number">7.</span> <span class="toc-text">取消异步操作CancellationToken和CancellationTokenSource</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E7%AD%89%E5%BE%85%E4%BB%BB%E5%8A%A1"><span class="toc-number">8.</span> <span class="toc-text">同步等待任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%BC%82%E6%AD%A5%E6%96%B9%E6%B3%95%E4%B8%AD%E5%BC%82%E6%AD%A5%E7%AD%89%E5%BE%85"><span class="toc-number">9.</span> <span class="toc-text">在异步方法中异步等待</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task-Delay"><span class="toc-number">10.</span> <span class="toc-text">Task.Delay</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GUI%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5"><span class="toc-number">11.</span> <span class="toc-text">GUI程序中的异步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Task-Yield"><span class="toc-number">12.</span> <span class="toc-text">Task.Yield</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">13.</span> <span class="toc-text">异步Lambda表达式</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/BLog/2023/08/30/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" title="异步编程">异步编程</a><time datetime="2023-08-30T12:27:17.000Z" title="发表于 2023-08-30 20:27:17">2023-08-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/BLog/2023/08/30/LINQ/" title="LINQ">LINQ</a><time datetime="2023-08-30T04:59:20.000Z" title="发表于 2023-08-30 12:59:20">2023-08-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/BLog/2023/08/30/%E6%9E%9A%E4%B8%BE%E5%99%A8%E4%B8%8E%E8%BF%AD%E4%BB%A3%E5%99%A8/" title="枚举器与迭代器">枚举器与迭代器</a><time datetime="2023-08-30T02:38:09.000Z" title="发表于 2023-08-30 10:38:09">2023-08-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/BLog/2023/08/30/%E5%8D%8F%E5%8F%98%E4%B8%8E%E9%80%86%E5%8F%98/" title="协变与逆变">协变与逆变</a><time datetime="2023-08-30T01:51:10.000Z" title="发表于 2023-08-30 09:51:10">2023-08-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/BLog/2023/08/29/%E6%B3%9B%E5%9E%8B/" title="泛型">泛型</a><time datetime="2023-08-29T12:13:55.000Z" title="发表于 2023-08-29 20:13:55">2023-08-29</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/BLog/images/top_img.webp')"><div id="footer-wrap"><div class="copyright">&copy;2023 By 刘嘉骅</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/BLog/js/utils.js"></script><script src="/BLog/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
