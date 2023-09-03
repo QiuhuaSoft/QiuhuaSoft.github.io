@@ -66,13 +66,13 @@
       
         <tags>
             
-            <tag> Linq </tag>
-            
-            <tag> 匿名类型 </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Linq </tag>
+            
+            <tag> 匿名类型 </tag>
             
         </tags>
       
@@ -382,11 +382,11 @@
       
         <tags>
             
+            <tag> ArrayList </tag>
+            
             <tag> C# </tag>
             
             <tag> .Net </tag>
-            
-            <tag> ArrayList </tag>
             
         </tags>
       
