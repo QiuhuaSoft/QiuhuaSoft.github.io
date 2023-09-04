@@ -4,13 +4,91 @@
   
     
     <entry>
+      <title>单元检测</title>
+      <link href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/"/>
+      <url>/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/</url>
+      
+        <content type="html"><![CDATA[<h2 id="单元检测"><a href="#单元检测" class="headerlink" title="单元检测"></a>单元检测</h2><p>当我们要查看某个方法是否有错误，我们可以创建一个专门用来测试的类，用于不调用主程序的情况下，在测试类中检测方法是否符合所期待的那样。这样的行为称为单元检测或单元测试。</p><h2 id="单元检测演示"><a href="#单元检测演示" class="headerlink" title="单元检测演示"></a>单元检测演示</h2><p>一台电脑如果想玩3A游戏的话当然需要一个好的显卡，能玩游戏的显卡就是好显卡，我们可以使用单元检测来判断。<br>主程序：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">namespace Test &#123;</span><br><span class="line">    internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            IGraphicsCard card = new NVIDIA();</span><br><span class="line">            Console.WriteLine(card.Show());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public interface IGraphicsCard &#123;</span><br><span class="line">        string Show();</span><br><span class="line">    &#125;</span><br><span class="line">    public class NVIDIA:IGraphicsCard &#123; </span><br><span class="line">        public string Show() &#123;</span><br><span class="line">            return &quot;正在玩原神&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public class AMD:IGraphicsCard &#123; </span><br><span class="line">        public string Show() &#123;</span><br><span class="line">            return &quot;正在玩星穹铁道&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>单元检测程序：<br>请先创建单元测试项目<br><img src="/images/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/1.jpg"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">using Test;//引用主程序名称空间</span><br><span class="line">namespace GraphicsCardTest &#123;</span><br><span class="line">    public class GraphicsCardTest &#123;//测试类</span><br><span class="line">        [Fact]</span><br><span class="line">        public void Test1() &#123;//测试方法</span><br><span class="line">            var gc = new NVIDIA();</span><br><span class="line">            var expected = &quot;正在玩原神&quot;;//如果NVIDIA显卡能玩原神则成功</span><br><span class="line">            var actual = gc.Show();</span><br><span class="line">            Assert.Equal(expected, actual);</span><br><span class="line">        &#125;</span><br><span class="line">        [Fact]</span><br><span class="line">        public void Test2() &#123;//测试方法</span><br><span class="line">            var gc = new AMD();</span><br><span class="line">            var expected = &quot;正在玩星穹铁道&quot;;//如果AMD显卡能玩星穹铁道则成功</span><br><span class="line">            var actual = gc.Show();</span><br><span class="line">            Assert.Equal(expected, actual);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>测试结果：<br><img src="/images/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/2.jpg"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> C#.Net </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
+            
+            <tag> 单元测试 </tag>
+            
+            <tag> 单元检测 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>依赖注入</title>
+      <link href="/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/"/>
+      <url>/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
+      
+        <content type="html"><![CDATA[<p>依赖注入的原理是——反射<br>如果想用依赖注入框架需要：<br>先用NuGet下载Microsoft.Extensions.DependencyInjection。<br>使用名称空间using Microsoft.Extensions.DependencyInjection;</p><h2 id="依赖注入框架的简单使用"><a href="#依赖注入框架的简单使用" class="headerlink" title="依赖注入框架的简单使用"></a>依赖注入框架的简单使用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            var sc = new ServiceCollection();//创建容器</span><br><span class="line">            sc.AddScoped(typeof(IStudent),typeof(Student));//接口描述，绑定该接口的类型的描述</span><br><span class="line">            var sp = sc.BuildServiceProvider();</span><br><span class="line">            // ==============================以下不再有new操作符</span><br><span class="line">            IStudent student = sp.GetService&lt;IStudent&gt;();</span><br><span class="line">            student.Study();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    interface IStudent &#123;</span><br><span class="line">        void Study();</span><br><span class="line">    &#125;</span><br><span class="line">    class Student : IStudent &#123;</span><br><span class="line">        public void Study() &#123;</span><br><span class="line">            Console.WriteLine(&quot;我要学习&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> C#.Net </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
+            
+            <tag> 依赖注入 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>反射</title>
       <link href="/2023/09/04/%E5%8F%8D%E5%B0%84/"/>
       <url>/2023/09/04/%E5%8F%8D%E5%B0%84/</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<p>对某些程序来说，它们操作的数据不是数字、文本或图形，而是关于程序和程序类型的信息。<br>有关程序及其类型的数据称为元数据，被保存在程序的程序集中。<br>程序在运行时，可以查看其他程序集或本身的元数据。这种行为叫做反射。<br>使用反射要使用System.Reflection命名空间。</p><h2 id="Type类"><a href="#Type类" class="headerlink" title="Type类"></a>Type类</h2><p>blc声明了一个Type抽象类，用来包含类型的特征，使用这个类的对象能获取程序使用的类型信息。<br>Type类成员<br><img src="/images/%E5%8F%8D%E5%B0%84/1.jpg"></p><h2 id="获取Type对象"><a href="#获取Type对象" class="headerlink" title="获取Type对象"></a>获取Type对象</h2><p>实例对象的GetType()方法和typeof()运算符</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">           Student std = new Student();</span><br><span class="line">           Type type1 = std.GetType();</span><br><span class="line">           Type type2 = typeof(Student);</span><br><span class="line">           Type type3 = typeof(int);</span><br><span class="line">           Console.WriteLine(type1.Name);</span><br><span class="line">           Console.WriteLine(type1.Namespace);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   class Student &#123;</span><br><span class="line">       public int Id &#123; get; set; &#125;</span><br><span class="line">       public string Name &#123; get; set; &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><h2 id="反射原理"><a href="#反射原理" class="headerlink" title="反射原理"></a>反射原理</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            IStudent std = new Student();</span><br><span class="line">            Type s = std.GetType();//获取类型信息</span><br><span class="line">            object o = Activator.CreateInstance(s);//通过获取的类型信息创建object类型实例</span><br><span class="line">            MethodInfo stuMi = s.GetMethod(&quot;Study&quot;);//获取该类型的Study方法</span><br><span class="line">            stuMi.Invoke(o, null);//在指定对象上调用该方法，第二个参数是参数</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    interface IStudent &#123;</span><br><span class="line">        int Id &#123; get; set; &#125;</span><br><span class="line">        string Name &#123; get; set; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    class Student : IStudent &#123;</span><br><span class="line">        public int Id &#123; get; set; &#125;</span><br><span class="line">        public string Name &#123; get; set; &#125;</span><br><span class="line">        public void Study() &#123;</span><br><span class="line">            Console.WriteLine(&quot;我要学习&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><h2 id="插件程序的开发"><a href="#插件程序的开发" class="headerlink" title="插件程序的开发"></a>插件程序的开发</h2><p>主体程序：<br>请先在程序目录下创建Animals文件夹，该文件用来存放插件，请将插件生成的dll放在该文件夹中，主体程序会遍历文件夹中的dll，从dll中通过反射获取类库的中所有具有Voice方法的类型信息，存放在animaTypes中，最后通过反射调用。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">using System.Runtime.Loader;</span><br><span class="line">namespace Test &#123;</span><br><span class="line">    internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            Console.WriteLine(Environment.CurrentDirectory);//请在该路径下创建Animals文件夹</span><br><span class="line">            var floder = Path.Combine(Environment.CurrentDirectory, &quot;Animals&quot;);</span><br><span class="line">            var files = Directory.GetFiles(floder);</span><br><span class="line">            var animalTypes = new List&lt;Type&gt;();</span><br><span class="line">            foreach (var file in files) &#123;</span><br><span class="line">                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);</span><br><span class="line">                var types = assembly.GetTypes();</span><br><span class="line">                foreach (var t in types) &#123;</span><br><span class="line">                    if(t.GetMethod(&quot;Voice&quot;)!=null) &#123;</span><br><span class="line">                        animalTypes.Add(t);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            while (true) &#123;</span><br><span class="line">                for(int i = 0; i&lt; animalTypes.Count; i++) &#123;</span><br><span class="line">                    Console.WriteLine($&quot;&#123;i+1&#125;,&#123;animalTypes[i].Name&#125;&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                Console.WriteLine(&quot;====================&quot;);</span><br><span class="line">                Console.WriteLine(&quot;Please choose animal&quot;);</span><br><span class="line">                int index = int.Parse(Console.ReadLine());</span><br><span class="line">                if(index&gt;animalTypes.Count || index&lt;1) &#123;</span><br><span class="line">                    Console.WriteLine(&quot;No such an animal.Try again!&quot;);</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                Console.WriteLine(&quot;How many times?&quot;);</span><br><span class="line">                int times = int.Parse(Console.ReadLine());</span><br><span class="line">                var t = animalTypes[index-1];</span><br><span class="line">                var m = t.GetMethod(&quot;Voice&quot;);</span><br><span class="line">                var o = Activator.CreateInstance(t);</span><br><span class="line">                m.Invoke(o, new object[] &#123; times &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>插件程序：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">namespace Animals &#123;</span><br><span class="line">    public class Cat &#123;</span><br><span class="line">        public void Voice(int times) &#123;</span><br><span class="line">            for(int i = 0; i &lt; times; i++) &#123;</span><br><span class="line">                Console.WriteLine(&quot;喵&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
+      <categories>
+          
+          <category> C#.Net </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
+            
+            <tag> 反射 </tag>
+            
+            <tag> Type </tag>
+            
+        </tags>
       
     </entry>
     
@@ -322,13 +400,13 @@
       
         <tags>
             
-            <tag> C# </tag>
-            
-            <tag> .Net </tag>
-            
             <tag> Dictionary </tag>
             
             <tag> 字典 </tag>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
             
         </tags>
       
@@ -382,11 +460,11 @@
       
         <tags>
             
-            <tag> ArrayList </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> ArrayList </tag>
             
         </tags>
       
@@ -592,13 +670,13 @@
             
             <tag> .Net </tag>
             
-            <tag> 构造函数 </tag>
-            
             <tag> 屏蔽 </tag>
             
             <tag> 基类访问 </tag>
             
             <tag> 基类引用 </tag>
+            
+            <tag> 构造函数 </tag>
             
         </tags>
       
@@ -693,13 +771,13 @@
             
             <tag> .Net </tag>
             
+            <tag> 构造函数 </tag>
+            
             <tag> 类 </tag>
             
             <tag> 属性 </tag>
             
             <tag> 方法 </tag>
-            
-            <tag> 构造函数 </tag>
             
             <tag> 静态构造函数 </tag>
             
