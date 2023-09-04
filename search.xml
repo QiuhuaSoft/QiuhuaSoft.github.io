@@ -400,13 +400,13 @@
       
         <tags>
             
-            <tag> C# </tag>
-            
-            <tag> .Net </tag>
-            
             <tag> Dictionary </tag>
             
             <tag> 字典 </tag>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
             
         </tags>
       
@@ -460,11 +460,11 @@
       
         <tags>
             
-            <tag> ArrayList </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> ArrayList </tag>
             
         </tags>
       
@@ -670,13 +670,13 @@
             
             <tag> .Net </tag>
             
+            <tag> 构造函数 </tag>
+            
             <tag> 屏蔽 </tag>
             
             <tag> 基类访问 </tag>
             
             <tag> 基类引用 </tag>
-            
-            <tag> 构造函数 </tag>
             
         </tags>
       
@@ -771,13 +771,13 @@
             
             <tag> .Net </tag>
             
-            <tag> 构造函数 </tag>
-            
             <tag> 类 </tag>
             
             <tag> 属性 </tag>
             
             <tag> 方法 </tag>
+            
+            <tag> 构造函数 </tag>
             
             <tag> 静态构造函数 </tag>
             
