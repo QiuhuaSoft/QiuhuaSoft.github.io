@@ -400,13 +400,13 @@
       
         <tags>
             
-            <tag> Dictionary </tag>
-            
-            <tag> 字典 </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Dictionary </tag>
+            
+            <tag> 字典 </tag>
             
         </tags>
       
@@ -460,11 +460,11 @@
       
         <tags>
             
+            <tag> ArrayList </tag>
+            
             <tag> C# </tag>
             
             <tag> .Net </tag>
-            
-            <tag> ArrayList </tag>
             
         </tags>
       
