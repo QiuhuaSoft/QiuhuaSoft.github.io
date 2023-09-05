@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>配置系统 | 知识改变命运</title><meta name="author" content="刘嘉骅"><meta name="copyright" content="刘嘉骅"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="一、JSON配置.Net配置系统支持丰富的配置源包括文件、注册表、环境变量、命令行、Azure Key Vault等，还可以配置自定义配置源。可以跟踪配置的改变，可以按照优先级覆盖。安装Microsoft.Extensions.Configuration（配置框架的包）和Microsoft.Extensions.Configuration.Json（读json的包）新建json文件，设置属性如果较">
+<meta property="og:type" content="article">
+<meta property="og:title" content="配置系统">
+<meta property="og:url" content="https://qiuhuasoft.github.io/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="知识改变命运">
+<meta property="og:description" content="一、JSON配置.Net配置系统支持丰富的配置源包括文件、注册表、环境变量、命令行、Azure Key Vault等，还可以配置自定义配置源。可以跟踪配置的改变，可以按照优先级覆盖。安装Microsoft.Extensions.Configuration（配置框架的包）和Microsoft.Extensions.Configuration.Json（读json的包）新建json文件，设置属性如果较">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp">
+<meta property="article:published_time" content="2023-09-05T14:08:36.000Z">
+<meta property="article:modified_time" content="2023-09-05T14:14:35.814Z">
+<meta property="article:author" content="刘嘉骅">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content=".Net">
+<meta property="article:tag" content="配置系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp"><link rel="shortcut icon" href="/images/avatar.jpg"><link rel="canonical" href="https://qiuhuasoft.github.io/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '配置系统',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-05 22:14:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">76</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="知识改变命运"><span class="site-name">知识改变命运</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">配置系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-05T14:08:36.000Z" title="发表于 2023-09-05 22:08:36">2023-09-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-05T14:14:35.814Z" title="更新于 2023-09-05 22:14:35">2023-09-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C-Net/">C#.Net</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="配置系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="一、JSON配置"><a href="#一、JSON配置" class="headerlink" title="一、JSON配置"></a>一、JSON配置</h1><p>.Net配置系统支持丰富的配置源包括文件、注册表、环境变量、命令行、Azure Key Vault等，还可以配置自定义配置源。可以跟踪配置的改变，可以按照优先级覆盖。<br>安装Microsoft.Extensions.Configuration（配置框架的包）和Microsoft.Extensions.Configuration.Json（读json的包）<br>新建json文件，设置属性如果较新就赋值。<br>config.json：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;张三&quot;,</span><br><span class="line">  &quot;age&quot;: &quot;18&quot;,</span><br><span class="line">  &quot;proxy&quot;: &#123;&quot;address&quot;: &quot;aa&quot;,&quot;port&quot;: &quot;8080&quot;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="1、原始使用方式"><a href="#1、原始使用方式" class="headerlink" title="1、原始使用方式"></a>1、原始使用方式</h2><p>AddJsonFile()命名参数介绍<br>optional表示文件是否可选<br>reloadOnChange参数表示如果文件修改了，是否重新加载设置（可以不重启就加载）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();</span><br><span class="line">            configurationBuilder.AddJsonFile(&quot;config.json&quot;, optional: true, reloadOnChange: true);</span><br><span class="line">            IConfigurationRoot configurationRoot = configurationBuilder.Build();</span><br><span class="line">            //原始方式</span><br><span class="line">            string name = configurationRoot[&quot;name&quot;];</span><br><span class="line">            string address = configurationRoot.GetSection(&quot;proxy:address&quot;).Value;</span><br><span class="line">            Console.WriteLine($&quot;name = &#123;name&#125;&quot;);</span><br><span class="line">            Console.WriteLine($&quot;address = &#123;address&#125;&quot;);</span><br><span class="line">            Console.ReadLine();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2、绑定对象方式"><a href="#2、绑定对象方式" class="headerlink" title="2、绑定对象方式"></a>2、绑定对象方式</h2><p>安装Microsoft.Extensions.Configuration.Binder<br>有自动类型转换，自定义的类的属性名应与配置文件中的键名一致（拼写一致就行，不区分大小写）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();</span><br><span class="line">            configurationBuilder.AddJsonFile(&quot;config.json&quot;, optional: true, reloadOnChange: true);</span><br><span class="line">            IConfigurationRoot configurationRoot = configurationBuilder.Build();</span><br><span class="line">            //绑定对象方式</span><br><span class="line">            Proxy proxy = configurationRoot.GetSection(&quot;proxy&quot;).Get&lt;Proxy&gt;();</span><br><span class="line">            Console.WriteLine($&quot;&#123;proxy.Address&#125;:&#123;proxy.Port&#125;&quot;);</span><br><span class="line">            Config config = configurationRoot.Get&lt;Config&gt;();</span><br><span class="line">            Console.WriteLine($&quot;&#123;config.Name&#125;,&#123;config.Age&#125;,&#123;config.Proxy.Address&#125;,&#123;config.Proxy.Port&#125;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    class Config &#123;</span><br><span class="line">        public string Name &#123; get; set; &#125;</span><br><span class="line">        public string Age &#123; get; set; &#125;</span><br><span class="line">        public Proxy Proxy &#123; get; set; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    class Proxy &#123;</span><br><span class="line">        public string Address &#123; get; set; &#125;</span><br><span class="line">        public int Port &#123; get; set; &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3、依赖注入方式（更推荐）"><a href="#3、依赖注入方式（更推荐）" class="headerlink" title="3、依赖注入方式（更推荐）"></a>3、依赖注入方式（更推荐）</h2><p>安装：<br>Microsoft.Extensions.Configuration.Binder<br>Microsoft.Extensions.Configuration<br>Microsoft.Extensions.Configuration.Json</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">       static void Main(string[] args) &#123;</span><br><span class="line">           ServiceCollection services = new ServiceCollection();</span><br><span class="line">           services.AddScoped&lt;TestController&gt;();</span><br><span class="line">           services.AddScoped&lt;Test2&gt;();</span><br><span class="line"> </span><br><span class="line">           ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();</span><br><span class="line">           configurationBuilder.AddJsonFile(&quot;config.json&quot;, optional: true, reloadOnChange: true);</span><br><span class="line">           IConfigurationRoot configurationRoot = configurationBuilder.Build();</span><br><span class="line"></span><br><span class="line">           services.AddOptions()</span><br><span class="line">               .Configure&lt;Config&gt;(e =&gt; configurationRoot.Bind(e))</span><br><span class="line">               .Configure&lt;Proxy&gt;(e=&gt; configurationRoot.GetSection(&quot;proxy&quot;).Bind(e));//DI将根节点绑定到Config对象上</span><br><span class="line"></span><br><span class="line">           using(var sp = services.BuildServiceProvider()) &#123;</span><br><span class="line">               //因为我们使用了IOptionSnapshot，所以修改文件时不会改变，相当于在一个大scope中</span><br><span class="line">               while (true) &#123;</span><br><span class="line">                   //如果想改变时获取新的数据，可以手动新建scope</span><br><span class="line">                   using(var scope = sp.CreateScope()) &#123;</span><br><span class="line">                       var c = scope.ServiceProvider.GetRequiredService&lt;TestController&gt;();</span><br><span class="line">                       c.Test();</span><br><span class="line">                       Console.WriteLine(&quot;改一下age&quot;);</span><br><span class="line">                       Console.ReadLine();</span><br><span class="line">                       c.Test();</span><br><span class="line">                       var c2 = scope.ServiceProvider.GetRequiredService&lt;Test2&gt;();</span><br><span class="line">                       c2.Test();</span><br><span class="line">                   &#125;</span><br><span class="line">                   Console.WriteLine(&quot;点击任意键继续&quot;);</span><br><span class="line">                   Console.ReadLine();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   class Config &#123;</span><br><span class="line">       public string Name &#123; get; set; &#125;</span><br><span class="line">       public string Age &#123; get; set; &#125;</span><br><span class="line">       public Proxy Proxy &#123; get; set; &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   class Proxy &#123;</span><br><span class="line">       public string Address &#123; get; set; &#125;</span><br><span class="line">       public int Port &#123; get; set; &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   internal class TestController &#123;</span><br><span class="line">       public readonly IOptionsSnapshot&lt;Config&gt; optConfig;</span><br><span class="line">       public TestController(IOptionsSnapshot&lt;Config&gt; optConfig) &#123;</span><br><span class="line">           this.optConfig = optConfig;</span><br><span class="line">       &#125;</span><br><span class="line">       public void Test() &#123;</span><br><span class="line">           Console.WriteLine(this.optConfig.Value.Age);</span><br><span class="line">           Console.WriteLine(&quot;===============&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   internal class Test2 &#123;</span><br><span class="line">       private readonly IOptionsSnapshot&lt;Proxy&gt; optProxy;</span><br><span class="line">       public Test2(IOptionsSnapshot&lt;Proxy&gt; optProxy) &#123;</span><br><span class="line">           this.optProxy = optProxy;</span><br><span class="line">       &#125;</span><br><span class="line">       public void Test() &#123;</span><br><span class="line">           Console.WriteLine(optProxy.Value.Address);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="二、命令行配置"><a href="#二、命令行配置" class="headerlink" title="二、命令行配置"></a>二、命令行配置</h1><h2 id="命令行简单配置："><a href="#命令行简单配置：" class="headerlink" title="命令行简单配置："></a>命令行简单配置：</h2><p>安装Microsoft.Extensions.Configuration.CommandLine<br>支持 server &#x3D; 127.0.0.1、–server&#x3D;127.0.0.1、 –server 127.0.0.1等，注意在键值之间加空格，格式不能混用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            ServiceCollection services = new ServiceCollection();</span><br><span class="line">            services.AddScoped&lt;TestController&gt;();</span><br><span class="line">            services.AddScoped&lt;Test2&gt;();</span><br><span class="line">            ConfigurationBuilder configBuder = new ConfigurationBuilder();</span><br><span class="line">            configBuder.AddCommandLine(args);//推荐传这个</span><br><span class="line">            IConfigurationRoot configRoot = configBuder.Build();</span><br><span class="line">            services.AddOptions()</span><br><span class="line">                .Configure&lt;Config&gt;(e =&gt; configRoot.Bind(e))</span><br><span class="line">                .Configure&lt;Proxy&gt;(e =&gt; configRoot.GetSection(&quot;Proxy&quot;));</span><br><span class="line">            using(var sp = services.BuildServiceProvider()) &#123;</span><br><span class="line">                while(true) &#123;</span><br><span class="line">                    using(var scope = sp.CreateScope()) &#123;</span><br><span class="line">                        var c1 = scope.ServiceProvider.GetRequiredService&lt;TestController&gt;();</span><br><span class="line">                        var c2 = scope.ServiceProvider.GetRequiredService&lt;Test2&gt;();</span><br><span class="line">                        c1.Test();</span><br><span class="line">                        c2.Test();</span><br><span class="line">                        Console.ReadLine();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public class Config &#123;</span><br><span class="line">            public string Name &#123; get; set; &#125;</span><br><span class="line">            public int Age &#123; get; set; &#125;</span><br><span class="line">            public Proxy proxy &#123; get; set; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        public class Proxy &#123;</span><br><span class="line">            public string Address &#123; get; set; &#125;</span><br><span class="line">            public int Port &#123; get; set; &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>可以这样运行：<br><img src="/images/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/1.jpg"><br>或者使用vs右键项目-&gt;属性-&gt;调试-&gt;启动配置文件：<br><img src="/images/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/2.jpg"><br>如果要写入多重结构的配置，需要进行扁平化处理</p>
+<h2 id="扁平化处理"><a href="#扁平化处理" class="headerlink" title="扁平化处理"></a>扁平化处理</h2></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C/">C#</a><a class="post-meta__tags" href="/tags/Net/">.Net</a><a class="post-meta__tags" href="/tags/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/">配置系统</a></div><div class="post_share"><div class="social-share" data-image="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/" title="单元检测"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/24.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">单元检测</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/30/LINQ/" title="LINQ"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/21.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-30</div><div class="title">LINQ</div></div></a></div><div><a href="/2023/08/29/%E4%BA%8B%E4%BB%B6/" title="事件"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/14.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-29</div><div class="title">事件</div></div></a></div><div><a href="/2023/08/28/%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0/" title="函数的参数"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/5.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">函数的参数</div></div></a></div><div><a href="/2023/08/28/ArrayList%E7%B1%BB/" title="ArrayList类"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/19.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">ArrayList类</div></div></a></div><div><a href="/2023/08/29/%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0/" title="匿名函数"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/12.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-29</div><div class="title">匿名函数</div></div></a></div><div><a href="/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" title="依赖注入"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/23.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-04</div><div class="title">依赖注入</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">刘嘉骅</div><div class="author-info__description">未经审视的生活不值得过,未经挑战的人生不值得活</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">76</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/loveAutumu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最近在学C#和Asp.net core，会多分享一些学习进度。C#参考了刘铁猛老师和杨中科老师的教学视频，感谢两位老师的无私奉献让我可以学习到这门编程语言，参考书籍推荐《C#图解教程》《ASP.NET Core技术内幕与项目实战》都是很好的学习用书。JavaScript参考了阮一峰老师的《ES6标准入门》和博客，内容干货很多，非常适合想要深入学习JS的朋友。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81JSON%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">一、JSON配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%8E%9F%E5%A7%8B%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">1、原始使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%BB%91%E5%AE%9A%E5%AF%B9%E8%B1%A1%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">2、绑定对象方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E6%9B%B4%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">3、依赖注入方式（更推荐）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">二、命令行配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%AE%80%E5%8D%95%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">命令行简单配置：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%84%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">扁平化处理</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/" title="配置系统"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置系统"/></a><div class="content"><a class="title" href="/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/" title="配置系统">配置系统</a><time datetime="2023-09-05T14:08:36.000Z" title="发表于 2023-09-05 22:08:36">2023-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/" title="单元检测"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/24.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单元检测"/></a><div class="content"><a class="title" href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/" title="单元检测">单元检测</a><time datetime="2023-09-04T01:26:53.000Z" title="发表于 2023-09-04 09:26:53">2023-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" title="依赖注入"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/23.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="依赖注入"/></a><div class="content"><a class="title" href="/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" title="依赖注入">依赖注入</a><time datetime="2023-09-04T01:26:38.000Z" title="发表于 2023-09-04 09:26:38">2023-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/04/%E5%8F%8D%E5%B0%84/" title="反射"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/22.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="反射"/></a><div class="content"><a class="title" href="/2023/09/04/%E5%8F%8D%E5%B0%84/" title="反射">反射</a><time datetime="2023-09-03T23:41:07.000Z" title="发表于 2023-09-04 07:41:07">2023-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/30/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" title="异步编程"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/18.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="异步编程"/></a><div class="content"><a class="title" href="/2023/08/30/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" title="异步编程">异步编程</a><time datetime="2023-08-30T12:27:17.000Z" title="发表于 2023-08-30 20:27:17">2023-08-30</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp')"><div id="footer-wrap"><div class="copyright">&copy;2023 By 刘嘉骅</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
