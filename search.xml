@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>ASP.NET入门篇</title>
+      <link href="/2023/09/07/ASP-NET%E5%85%A5%E9%97%A8%E7%AF%87/"/>
+      <url>/2023/09/07/ASP-NET%E5%85%A5%E9%97%A8%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<h1 id="初识Asp-Net-Core-Web-Api"><a href="#初识Asp-Net-Core-Web-Api" class="headerlink" title="初识Asp.Net Core Web Api"></a>初识Asp.Net Core Web Api</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">using Microsoft.AspNetCore.Http;</span><br><span class="line">using Microsoft.AspNetCore.Mvc;</span><br><span class="line">namespace AspTest.Controllers &#123;</span><br><span class="line">    [Route(&quot;api/[controller]&quot;)]</span><br><span class="line">    [ApiController]</span><br><span class="line">    public class TestController : ControllerBase &#123;</span><br><span class="line">        [HttpGet]</span><br><span class="line">        public UserInfoRequest UserInfo() &#123;</span><br><span class="line">            var UserInfo =  new UserInfoRequest();</span><br><span class="line">            UserInfo.Email = &quot;abc@123.com&quot;;</span><br><span class="line">            UserInfo.Name = &quot;Test&quot;;</span><br><span class="line">            UserInfo.Password = &quot;password&quot;;</span><br><span class="line">            return UserInfo;</span><br><span class="line">        &#125;</span><br><span class="line">        [HttpPost]</span><br><span class="line">        public string UserInfoRequery(UserInfoRequest userInfo) &#123;</span><br><span class="line">            Console.WriteLine(userInfo.Name);</span><br><span class="line">            Console.WriteLine(userInfo.Email);</span><br><span class="line">            return &quot;ok&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Route特性内为访问路径。<br>web api比mvc少了视图，它的控制器依然以xxxController命名并且控制器类被[ApiController修饰]，其中xxx表示控制器的名字，它需要继承ControllerBase，当浏览器访问&#x2F;xxx路径时默认发起Get请求。<br>[HttpGet]、[HttpPost]用于修饰方法，该方法的返回值为http请求的响应内容（默认JSON）。<br><img src="/images/ASP.NET%E5%85%A5%E9%97%A8%E7%AF%87/1.jpg"><br><img src="/images/ASP.NET%E5%85%A5%E9%97%A8%E7%AF%87/2.jpg"></p><h1 id="风格"><a href="#风格" class="headerlink" title="风格"></a>风格</h1><p>web api风格有两种，一种是面向过程（RPC），一种是面向REST。<br>RPC：<br>通过“控制器&#x2F;操作方法”（有点像mvc）的形式把服务器端的代码当成方法去调用。把http当成传输数据的通道，不关心http谓词，通过QueryString、请求报文体给服务器传递数据，状态码。比如：&#x2F;Person&#x2F;GetAll、&#x2F;Person&#x2F;GetById?id&#x3D;8<br>REST：<br>按照http语义来使用http协议。<br>URL用于资源的定位：&#x2F;user&#x2F;888、&#x2F;user&#x2F;888&#x2F;orders<br>http谓词有GET POST PUT DELETE PATCH等<br>DELETE PUT GET是幂等的<br>服务器端通过状态码来反应资源获取结果如404 403 201</p><h1 id="传递数据"><a href="#传递数据" class="headerlink" title="传递数据"></a>传递数据</h1><p>方式：<br>URL、QueryString、请求报文体（不支持Get、Delete）</p><h2 id="RPC数据传递"><a href="#RPC数据传递" class="headerlink" title="RPC数据传递"></a>RPC数据传递</h2><p>控制器上[Route(“[controller]&#x2F;[action]”)]表示通过控制器名和方法名进行定位<br>强制要求控制器中不同的操作用不同的方法名<br>把[HttpGet]、[HttpPost]等添加到对应操作方法上<br>注意：如果控制器中存在一个没有添加[HttpGet]、[HttpPost]等的public方法，swagger就会报错，可以用[ApiExploreSetting(IgnoreApi &#x3D; true)]</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">namespace AspTest.Controllers &#123;</span><br><span class="line">    [Route(&quot;api/[controller]/[action]&quot;)]</span><br><span class="line">    [ApiController]</span><br><span class="line">    public class StudentController : ControllerBase &#123;</span><br><span class="line">        [HttpGet]</span><br><span class="line">        public Student? GetStdInfo(int id) &#123;</span><br><span class="line">            if (id == 18) &#123;</span><br><span class="line">                return new Student(&quot;张三&quot;, 20, 18);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="/images/ASP.NET%E5%85%A5%E9%97%A8%E7%AF%87/3.jpg"></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>配置系统</title>
       <link href="/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/"/>
       <url>/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/</url>
@@ -699,13 +712,13 @@
             
             <tag> .Net </tag>
             
-            <tag> 构造函数 </tag>
-            
             <tag> 屏蔽 </tag>
             
             <tag> 基类访问 </tag>
             
             <tag> 基类引用 </tag>
+            
+            <tag> 构造函数 </tag>
             
         </tags>
       
@@ -800,13 +813,13 @@
             
             <tag> .Net </tag>
             
+            <tag> 构造函数 </tag>
+            
             <tag> 类 </tag>
             
             <tag> 属性 </tag>
             
             <tag> 方法 </tag>
-            
-            <tag> 构造函数 </tag>
             
             <tag> 静态构造函数 </tag>
             
