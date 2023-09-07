@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>日志系统 | 知识改变命运</title><meta name="author" content="刘嘉骅"><meta name="copyright" content="刘嘉骅"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="日志系统官方文档：https:&#x2F;&#x2F;learn.microsoft.com&#x2F;zh-cn&#x2F;dotnet&#x2F;core&#x2F;extensions&#x2F;logging?tabs&#x3D;command-line日志级别：Trace&lt;Debug&lt;Information&lt;Warning&lt;Error&lt;Critical日志提供者（LoggingProvider）:把日志输出到控制台、文件、数据库等。对于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日志系统">
+<meta property="og:url" content="https://qiuhuasoft.github.io/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="知识改变命运">
+<meta property="og:description" content="日志系统官方文档：https:&#x2F;&#x2F;learn.microsoft.com&#x2F;zh-cn&#x2F;dotnet&#x2F;core&#x2F;extensions&#x2F;logging?tabs&#x3D;command-line日志级别：Trace&lt;Debug&lt;Information&lt;Warning&lt;Error&lt;Critical日志提供者（LoggingProvider）:把日志输出到控制台、文件、数据库等。对于">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp">
+<meta property="article:published_time" content="2023-09-07T09:05:56.000Z">
+<meta property="article:modified_time" content="2023-09-07T12:37:48.078Z">
+<meta property="article:author" content="刘嘉骅">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content=".Net">
+<meta property="article:tag" content="Logging">
+<meta property="article:tag" content="日志">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp"><link rel="shortcut icon" href="/images/avatar.jpg"><link rel="canonical" href="https://qiuhuasoft.github.io/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '日志系统',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-07 20:37:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">81</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="知识改变命运"><span class="site-name">知识改变命运</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">日志系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-07T09:05:56.000Z" title="发表于 2023-09-07 17:05:56">2023-09-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-07T12:37:48.078Z" title="更新于 2023-09-07 20:37:48">2023-09-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C-Net/">C#.Net</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="日志系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>日志系统官方文档：<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/core/extensions/logging?tabs=command-line">https://learn.microsoft.com/zh-cn/dotnet/core/extensions/logging?tabs=command-line</a><br>日志级别：<br>Trace&lt;Debug&lt;Information&lt;Warning&lt;Error&lt;Critical<br>日志提供者（LoggingProvider）:<br>把日志输出到控制台、文件、数据库等。<br>对于业务代码只要注入日志对象记录日志即可，具体哪些日志输出到哪里、什么样的格式、是否输出等都有配置或者初始化代码决定。</p>
+<h1 id="控制台日志"><a href="#控制台日志" class="headerlink" title="控制台日志"></a>控制台日志</h1><p>安装：Microsoft.Extensions.Logging、Microsoft.Extensions.Logging.Console</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">using Microsoft.Extensions.DependencyInjection;</span><br><span class="line">using Microsoft.Extensions.Logging;</span><br><span class="line"></span><br><span class="line">namespace Test &#123;</span><br><span class="line">    internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            ServiceCollection services = new ServiceCollection();</span><br><span class="line">            services.AddLogging((logBuilder) =&gt; &#123;</span><br><span class="line">                logBuilder.AddConsole();</span><br><span class="line">                //logBuilder.AddEventLog();安装Microsoft.Extension.Logging.EventLog，这个只能windows用所以用的很少</span><br><span class="line">                logBuilder.SetMinimumLevel(LogLevel.Debug);//设置最低级别，不写这个看不到Debug信息</span><br><span class="line">            &#125;);</span><br><span class="line">            services.AddScoped&lt;Test1&gt;();</span><br><span class="line">            using(var sp = services.BuildServiceProvider()) &#123;</span><br><span class="line">               var test1 = sp.GetRequiredService&lt;Test1&gt;();</span><br><span class="line">                test1.Test();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public class Test1 &#123;</span><br><span class="line">        //&lt;&gt;里面一般为当前类，这样可以直接从找到是哪个类记录了日志</span><br><span class="line">        private readonly ILogger&lt;Test1&gt; logger;</span><br><span class="line">        public Test1(ILogger&lt;Test1&gt; logger) &#123;</span><br><span class="line">            this.logger = logger;</span><br><span class="line">        &#125;</span><br><span class="line">        public void Test() &#123;</span><br><span class="line">            logger.LogDebug(&quot;开始执行数据库同步&quot;);</span><br><span class="line">            logger.LogDebug(&quot;连接数据库成功&quot;);</span><br><span class="line">            logger.LogWarning(&quot;查找数据失败，重试第一次&quot;);</span><br><span class="line">            logger.LogWarning(&quot;查找数据失败，重试第二次&quot;);</span><br><span class="line">            logger.LogError(&quot;查找数据最终失败&quot;);</span><br><span class="line">            try &#123;</span><br><span class="line">                File.ReadAllText(&quot;A:/1.txt&quot;);</span><br><span class="line">                logger.LogDebug(&quot;读取文件成功&quot;);</span><br><span class="line">            &#125;catch(Exception ex) &#123;</span><br><span class="line">                //通过该方法记录异常，可以传入异常对象</span><br><span class="line">                logger.LogError(ex,&quot;读取文件失败&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="NLog文本日志"><a href="#NLog文本日志" class="headerlink" title="NLog文本日志"></a>NLog文本日志</h1><p>NLog官方文档：<br><a target="_blank" rel="noopener" href="https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-6">https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-6</a><br>文本日志一般按照日期区分，为了避免磁盘被撑爆可以限制日志总个数或者总大小。<br>1、.Net没有内置文本日志提供者。第三方有Log4Net、NLog、Serilog等。老牌的Log4Net另搞一套，不考虑。<br>安装：<br>NLog.Extensions.Logging(using NLog.Extension.Logging;)。2、项目根目录下建nlog.config选择文件较新则赋值，注意文件名的大小写（考虑linux）。也可以是其他文件名，但是需要单独配置。约定大于配置。<br>3、增加logBuilder.AddNLog();</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">//nlog.config</span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span><br><span class="line">&lt;nlog xmlns=&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;</span><br><span class="line">      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">      autoReload=&quot;true&quot;</span><br><span class="line">      internalLogLevel=&quot;Info&quot;</span><br><span class="line">      internalLogFile=&quot;c:\temp\internal-nlog-AspNetCore.txt&quot;&gt;</span><br><span class="line"></span><br><span class="line">  &lt;!-- enable asp.net core layout renderers --&gt;</span><br><span class="line">  &lt;extensions&gt;</span><br><span class="line">    &lt;add assembly=&quot;NLog.Web.AspNetCore&quot;/&gt;</span><br><span class="line">  &lt;/extensions&gt;</span><br><span class="line"></span><br><span class="line">  &lt;!-- the targets to write to --&gt;</span><br><span class="line">  &lt;targets&gt;</span><br><span class="line">    &lt;!-- File Target for all log messages with basic details --&gt;</span><br><span class="line">    &lt;target xsi:type=&quot;File&quot; name=&quot;allfile&quot; fileName=&quot;c:\temp\nlog-AspNetCore-all-$&#123;shortdate&#125;.log&quot;</span><br><span class="line">            layout=&quot;$&#123;longdate&#125;|$&#123;event-properties:item=EventId:whenEmpty=0&#125;|$&#123;level:uppercase=true&#125;|$&#123;logger&#125;|$&#123;message&#125; $&#123;exception:format=tostring&#125;&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- File Target for own log messages with extra web details using some ASP.NET core renderers --&gt;</span><br><span class="line">    &lt;target xsi:type=&quot;File&quot; name=&quot;ownFile-web&quot; fileName=&quot;c:\temp\nlog-AspNetCore-own-$&#123;shortdate&#125;.log&quot;</span><br><span class="line">            layout=&quot;$&#123;longdate&#125;|$&#123;event-properties:item=EventId:whenEmpty=0&#125;|$&#123;level:uppercase=true&#125;|$&#123;logger&#125;|$&#123;message&#125; $&#123;exception:format=tostring&#125;|url: $&#123;aspnet-request-url&#125;|action: $&#123;aspnet-mvc-action&#125;&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Console Target for hosting lifetime messages to improve Docker / Visual Studio startup detection --&gt;</span><br><span class="line">    &lt;target xsi:type=&quot;Console&quot; name=&quot;lifetimeConsole&quot; layout=&quot;$&#123;MicrosoftConsoleLayout&#125;&quot; /&gt;</span><br><span class="line">  &lt;/targets&gt;</span><br><span class="line"></span><br><span class="line">  &lt;!-- rules to map from logger name to target --&gt;</span><br><span class="line">  &lt;rules&gt;</span><br><span class="line">    &lt;!--All logs, including from Microsoft--&gt;</span><br><span class="line">    &lt;logger name=&quot;*&quot; minlevel=&quot;Trace&quot; writeTo=&quot;allfile&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Output hosting lifetime messages to console target for faster startup detection --&gt;</span><br><span class="line">    &lt;logger name=&quot;Microsoft.Hosting.Lifetime&quot; minlevel=&quot;Info&quot; writeTo=&quot;lifetimeConsole, ownFile-web&quot; final=&quot;true&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Skip non-critical Microsoft logs and so log only own logs (BlackHole) --&gt;</span><br><span class="line">    &lt;logger name=&quot;Microsoft.*&quot; maxlevel=&quot;Info&quot; final=&quot;true&quot; /&gt;</span><br><span class="line">    &lt;logger name=&quot;System.Net.Http.*&quot; maxlevel=&quot;Info&quot; final=&quot;true&quot; /&gt;</span><br><span class="line">  </span><br><span class="line">    &lt;logger name=&quot;*&quot; minlevel=&quot;Trace&quot; writeTo=&quot;ownFile-web&quot; /&gt;</span><br><span class="line">  &lt;/rules&gt;</span><br><span class="line">&lt;/nlog&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">using NLog.Extensions.Logging;</span><br><span class="line">//============================</span><br><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">            ServiceCollection services = new ServiceCollection();</span><br><span class="line">            services.AddLogging((logBuilder) =&gt; &#123;</span><br><span class="line">                logBuilder.AddNLog();</span><br><span class="line">            &#125;);</span><br><span class="line">            services.AddScoped&lt;Test1&gt;();</span><br><span class="line">            using(var sp = services.BuildServiceProvider()) &#123;</span><br><span class="line">               var test1 = sp.GetRequiredService&lt;Test1&gt;();</span><br><span class="line">                test1.Test();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>nlog有多个traget表示日志输出到哪，rules中有多个logger，会从上往下匹配，用来配置日志规则（哪个级别输出到哪个target），匹配到final&#x3D;true就不再往下匹配。</p>
+<h2 id="日志分类、过滤"><a href="#日志分类、过滤" class="headerlink" title="日志分类、过滤"></a>日志分类、过滤</h2><p>1、为什么要分类？不同级别或者不同模块的日志要记录到不同的地方。<br>2、为什么要过滤？项目不同阶段（比如刚上线和稳定后）需要记录的日志不同。严重错误可以调用短信Provider等。<br>3、搞一个新的类，放到SystemServices这个名称空间下，然后输出一些日志。然后调用很多次日志执行。nlog.config如备注所改。</p>
+<h2 id="重要的参数"><a href="#重要的参数" class="headerlink" title="重要的参数"></a>重要的参数</h2><p>archiveAboveSize为”单个日志文件超过多少字节就把日志存档”，如果不设定maxArchiveFiles参数，则文件日志存档文件的数量会一直增加。<br>maxArchiveFiles指定数量个数的存档文件，旧的会被删掉。<br>maxArchiveDays设定保存若干天的日志存档。<br>通过设定这些参数实现滚动日志策略。</p>
+<h2 id="rules"><a href="#rules" class="headerlink" title="rules"></a>rules</h2><p>rules节点下可以添加多个logger，每个logger都有name属性，name是通配符格式的。<br>logger节点的minlevel属性和maxlevel属性，表示这个logger接受日志的最低级别和最高级别。<br>日志输出时，会从上往下匹配rules节点下所有的logger，若发现当前日志的分类名和level符合这个logger的name的通配符，就会把日志输出给这个logger。如果匹配多个logger，就会把这条日志输出给多个logger。但是如果一个logger设置了final&#x3D;”true”，那么如果匹配到这个logger，就不继续向下匹配其他logger了。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>NLog部分功能和.NET的Logging重复，比如分类、分级、各种Provider。<br>为了避免冲突，如果用NLog，建议不要再配置.NET的分级等。</p>
+<h1 id="结构化日志"><a href="#结构化日志" class="headerlink" title="结构化日志"></a>结构化日志</h1><p>敬请期待</p>
+<h1 id="集中化日志"><a href="#集中化日志" class="headerlink" title="集中化日志"></a>集中化日志</h1><p>敬请期待</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C/">C#</a><a class="post-meta__tags" href="/tags/Net/">.Net</a><a class="post-meta__tags" href="/tags/Logging/">Logging</a><a class="post-meta__tags" href="/tags/%E6%97%A5%E5%BF%97/">日志</a></div><div class="post_share"><div class="social-share" data-image="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/09/07/ASP-NET%E5%88%9D%E7%BA%A7%E7%AF%87/" title="ASP.NET初级篇"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/27.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ASP.NET初级篇</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/28/ArrayList%E7%B1%BB/" title="ArrayList类"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/19.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">ArrayList类</div></div></a></div><div><a href="/2023/08/28/Dictionary%E5%AD%97%E5%85%B8/" title="Dictionary字典"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/20.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">Dictionary字典</div></div></a></div><div><a href="/2023/08/30/LINQ/" title="LINQ"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/21.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-30</div><div class="title">LINQ</div></div></a></div><div><a href="/2023/08/29/%E4%BA%8B%E4%BB%B6/" title="事件"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/14.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-29</div><div class="title">事件</div></div></a></div><div><a href="/2023/09/04/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" title="依赖注入"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/23.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-04</div><div class="title">依赖注入</div></div></a></div><div><a href="/2023/08/28/%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0/" title="函数的参数"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/5.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">函数的参数</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">刘嘉骅</div><div class="author-info__description">未经审视的生活不值得过,未经挑战的人生不值得活</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">81</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/QiuhuaSoft"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最近在学C#和Asp.net core，会多分享一些学习进度。C#参考了刘铁猛老师和杨中科老师的教学视频，感谢两位老师的无私奉献让我可以学习到这门编程语言，参考书籍推荐《C#图解教程》《ASP.NET Core技术内幕与项目实战》都是很好的学习用书。JavaScript参考了阮一峰老师的《ES6标准入门》和博客，内容干货很多，非常适合想要深入学习JS的朋友。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%97%A5%E5%BF%97"><span class="toc-number">1.</span> <span class="toc-text">控制台日志</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NLog%E6%96%87%E6%9C%AC%E6%97%A5%E5%BF%97"><span class="toc-number">2.</span> <span class="toc-text">NLog文本日志</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E7%B1%BB%E3%80%81%E8%BF%87%E6%BB%A4"><span class="toc-number">2.1.</span> <span class="toc-text">日志分类、过滤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E7%9A%84%E5%8F%82%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">重要的参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rules"><span class="toc-number">2.3.</span> <span class="toc-text">rules</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">2.4.</span> <span class="toc-text">其他</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E6%97%A5%E5%BF%97"><span class="toc-number">3.</span> <span class="toc-text">结构化日志</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9B%86%E4%B8%AD%E5%8C%96%E6%97%A5%E5%BF%97"><span class="toc-number">4.</span> <span class="toc-text">集中化日志</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/" title="日志系统"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="日志系统"/></a><div class="content"><a class="title" href="/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/" title="日志系统">日志系统</a><time datetime="2023-09-07T09:05:56.000Z" title="发表于 2023-09-07 17:05:56">2023-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/07/ASP-NET%E5%88%9D%E7%BA%A7%E7%AF%87/" title="ASP.NET初级篇"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/27.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ASP.NET初级篇"/></a><div class="content"><a class="title" href="/2023/09/07/ASP-NET%E5%88%9D%E7%BA%A7%E7%AF%87/" title="ASP.NET初级篇">ASP.NET初级篇</a><time datetime="2023-09-07T08:25:42.000Z" title="发表于 2023-09-07 16:25:42">2023-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/07/ASP-NET%E5%85%A5%E9%97%A8%E7%AF%87/" title="ASP.NET入门篇"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/26.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ASP.NET入门篇"/></a><div class="content"><a class="title" href="/2023/09/07/ASP-NET%E5%85%A5%E9%97%A8%E7%AF%87/" title="ASP.NET入门篇">ASP.NET入门篇</a><time datetime="2023-09-07T02:05:14.000Z" title="发表于 2023-09-07 10:05:14">2023-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/" title="配置系统"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/25.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置系统"/></a><div class="content"><a class="title" href="/2023/09/05/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F/" title="配置系统">配置系统</a><time datetime="2023-09-05T14:08:36.000Z" title="发表于 2023-09-05 22:08:36">2023-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/" title="单元检测"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/24.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单元检测"/></a><div class="content"><a class="title" href="/2023/09/04/%E5%8D%95%E5%85%83%E6%A3%80%E6%B5%8B/" title="单元检测">单元检测</a><time datetime="2023-09-04T01:26:53.000Z" title="发表于 2023-09-04 09:26:53">2023-09-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/28.webp')"><div id="footer-wrap"><div class="copyright">&copy;2023 By 刘嘉骅</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
