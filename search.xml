@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>ASP.NET中级篇</title>
+      <link href="/2023/09/13/ASP-NET%E4%B8%AD%E7%BA%A7%E7%AF%87/"/>
+      <url>/2023/09/13/ASP-NET%E4%B8%AD%E7%BA%A7%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<h1 id="配置系统"><a href="#配置系统" class="headerlink" title="配置系统"></a>配置系统</h1><h2 id="默认添加配置提供者"><a href="#默认添加配置提供者" class="headerlink" title="默认添加配置提供者"></a>默认添加配置提供者</h2><p>ASP.NET CORE默认添加的配置提供者：<br>1)加载现有的IConfiguration<br>2)加载项目根目录下的appsettings.json<br>3)加载项目根目录下的appsettings.{Environment}.json<br>4)当程序运行在开发环境在，程序会加载“用户机密”配置<br>5)加载环境变量中的配置<br>6)加载命令行中的配置</p><h2 id="开发、测试、生产环境"><a href="#开发、测试、生产环境" class="headerlink" title="开发、测试、生产环境"></a>开发、测试、生产环境</h2><p>不同的环境有不同的配置<br>运行环境：ASP.NET Core会从环境变量中读取名字为ASPNETCORE_ENVIRONMENT的值，推荐值：Development、Staging、Production。<br>读取方法：app.Environment.EnvironmentName、app.Environment.IsDevelopment()……<br>在windows和vs中设置环境变量的方法。</p><h2 id="机密信息"><a href="#机密信息" class="headerlink" title="机密信息"></a>机密信息</h2><p>1、把不方便放到appsetting.json中的机密信息放到一个不在项目中的json文件中。<br>2、在ASP.NET Core项目上单击鼠标右键，选择【管理用户机密】。<br>3、secrets.json文件和项目通过csproj文件中的&lt;UserSecretsId&gt;建立关系。<br>注意事项：<br>机密信息仅供开发人员使用。<br>仍然是明文存储，如果不想被人看到可通过Azure Key Vault、Zack.AnyDBConfigProvider等，但是无法完全避免。<br>如果因为重装、新员工等原因导致secrets.js重建，就要重新配置，如果影响大的话，还是用集中式配置服务器。</p><h2 id="配置系统的使用"><a href="#配置系统的使用" class="headerlink" title="配置系统的使用"></a>配置系统的使用</h2><p>其实没必要看我的，直接看文档就行。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//Program.cs</span><br><span class="line">            builder.Configuration.AddJsonFile(&quot;MyConfig.json&quot;,//添加json配置文件</span><br><span class="line">                optional: true,</span><br><span class="line">                reloadOnChange: true</span><br><span class="line">            );</span><br><span class="line">            builder.Services.Configure&lt;Config&gt;(builder.Configuration);//将Config注入到DI中，并且绑定到根节点上</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//MyConfig.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;张三&quot;,</span><br><span class="line">  &quot;age&quot;: &quot;18&quot;,</span><br><span class="line">  &quot;proxy&quot;: &#123;</span><br><span class="line">    &quot;address&quot;: &quot;aa&quot;,</span><br><span class="line">    &quot;port&quot;: &quot;8080&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//ConfigController.cs</span><br><span class="line">    [Route(&quot;api/[controller]&quot;)]</span><br><span class="line">    [ApiController]</span><br><span class="line">    public class ConfigController : ControllerBase &#123;</span><br><span class="line">        private readonly IOptionsSnapshot&lt;Config&gt; optConfig;//在需要用到的地方依赖注入</span><br><span class="line">        public ConfigController(IOptionsSnapshot&lt;Config&gt; optConfig) &#123;</span><br><span class="line">            this.optConfig = optConfig;</span><br><span class="line">        &#125;</span><br><span class="line">        [HttpGet]</span><br><span class="line">        public string Test() &#123;</span><br><span class="line">            return optConfig.Value.Proxy.Address;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><h1 id="ASP-NET与EFCore"><a href="#ASP-NET与EFCore" class="headerlink" title="ASP.NET与EFCore"></a>ASP.NET与EFCore</h1><p>敬请期待</p><h1 id="筛选器Filter"><a href="#筛选器Filter" class="headerlink" title="筛选器Filter"></a>筛选器Filter</h1><p>1、Filter是面向切面编程机制，在ASP.NET Core特定的位置执行我们自定义的代码<br>2、有5种Filter类型：Authorization filter、Resource filter、Action filter、Exception filter、Result filter。<br>3、所有筛选器一般有同步异步两个版本比如IActionFilter、IAsyncActionFilter接口</p><h2 id="异常筛选器"><a href="#异常筛选器" class="headerlink" title="异常筛选器"></a>异常筛选器</h2><p>当系统中出现未经处理的异常时，异常筛选器会执行。<br>目标：当系统中出现未处理异常的时候，我们统一给客户端返回如下格式的响应报文：{“code”:”500”,”message”:”异常信息”}，对于开发环境中message是异常堆栈，对于其他环境message用一个general的报错信息。<br>实现：实现IAsyncExceptionFilter接口。注入IHostEnvironment得知运行环境。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//Action方法</span><br><span class="line">        [HttpGet]</span><br><span class="line">        public string MakeErr() &#123;</span><br><span class="line">           string s =  System.IO.File.ReadAllText(&quot;f:/1.txt&quot;);</span><br><span class="line">            return s;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//创建自定义异常筛选器</span><br><span class="line">    public class MyExceptionFilter : IAsyncExceptionFilter &#123;</span><br><span class="line">        private readonly IWebHostEnvironment webHostEnvironment;//将需要用到的服务注入，我们需要这个来判断当前为什么环境</span><br><span class="line">        public MyExceptionFilter(IWebHostEnvironment webHostEnvironment) &#123;</span><br><span class="line">            this.webHostEnvironment = webHostEnvironment;</span><br><span class="line">        &#125;</span><br><span class="line">        public Task OnExceptionAsync(ExceptionContext context) &#123;</span><br><span class="line">            //当Action中发生未处理异常，该方法会被调用</span><br><span class="line">            //context.Exception代表异常信息对象</span><br><span class="line">            //如果给context.ExceptionHandled赋值为true，其他的ExceptionFilter就不会再执行</span><br><span class="line">            //context.Result的值会被输出给客户端，是一个IActionResult类型的对象</span><br><span class="line">            string msg;</span><br><span class="line">            if(webHostEnvironment.IsDevelopment()) &#123;</span><br><span class="line">                //如果是开发环境</span><br><span class="line">                msg = context.Exception.ToString();</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                msg = &quot;服务器端发生未处理异常&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">            //ObjectResult继承ActionResult实现IActionResult</span><br><span class="line">            ObjectResult obj = new ObjectResult(new &#123;code= 500 ,message = msg&#125;);</span><br><span class="line">            context.Result = obj;</span><br><span class="line">            context.ExceptionHandled = true;//告诉别的ExceptionFilter不用执行了</span><br><span class="line">            context.Result = obj;</span><br><span class="line">            return Task.CompletedTask;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//Program.cs</span><br><span class="line">            builder.Services.Configure&lt;MvcOptions&gt;(options =&gt; &#123;</span><br><span class="line">                options.Filters.Add&lt;MyExceptionFilter&gt;();//注入自定义异常筛选器，注意！！！：多个筛选器Add的时候要注意顺序</span><br><span class="line">            &#125;);</span><br></pre></td></tr></table></figure><h2 id="Action筛选器"><a href="#Action筛选器" class="headerlink" title="Action筛选器"></a>Action筛选器</h2><p>用于控制器中每个action方法执行之前和之后执行自定义代码，比如在执行action之前判断用户有没有权限或者在执行之后记录日志。<br>一个筛选器分为前代码和后代码，有多个ActionFilter执行顺序为：<br>1前-&gt;2前-&gt;3前-&gt;Action-&gt;3后-&gt;2后-&gt;1后<br>自定义Action筛选器需要实现IActionFilter&#x2F;IAsyncActionFilter接口。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//Action方法</span><br><span class="line">[HttpGet]</span><br><span class="line">        public string TestAction() &#123;</span><br><span class="line">            Console.WriteLine(&quot;执行中&quot;);</span><br><span class="line">            return &quot;执行中&quot;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//创建自定义Action筛选器</span><br><span class="line">    public class MyActionFilter : IAsyncActionFilter &#123;</span><br><span class="line">        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) &#123;</span><br><span class="line">            //next为委托，调用next()程序就会向下执行</span><br><span class="line">            Console.WriteLine(&quot;Action1执行前&quot;);</span><br><span class="line">            ActionExecutedContext result = await next();//next()的返回值表示action执行中是否出现异常</span><br><span class="line">            if(result.Exception != null) &#123;</span><br><span class="line">                Console.WriteLine(&quot;Action1发生了异常&quot;);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                Console.WriteLine(&quot;Action1执行成功&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//Program.cs</span><br><span class="line">            builder.Services.Configure&lt;MvcOptions&gt;(options =&gt; &#123;</span><br><span class="line">                options.Filters.Add&lt;MyActionFilter&gt;();</span><br><span class="line">            &#125;);</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> C#.Net </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 筛选器 </tag>
+            
+            <tag> ASP.NET Core </tag>
+            
+            <tag> C# </tag>
+            
+            <tag> .Net </tag>
+            
+            <tag> 中级 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>日志系统</title>
       <link href="/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/"/>
       <url>/2023/09/07/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/</url>
@@ -51,9 +84,9 @@
       
         <tags>
             
-            <tag> ASP.NET CORE </tag>
-            
             <tag> C# </tag>
+            
+            <tag> ASP.NET CORE </tag>
             
             <tag> 入门 </tag>
             
@@ -86,9 +119,9 @@
       
         <tags>
             
-            <tag> ASP.NET CORE </tag>
-            
             <tag> C# </tag>
+            
+            <tag> ASP.NET CORE </tag>
             
             <tag> 入门 </tag>
             
@@ -272,11 +305,11 @@
             
             <tag> C# </tag>
             
+            <tag> .Net </tag>
+            
             <tag> Linq </tag>
             
             <tag> 匿名类型 </tag>
-            
-            <tag> .Net </tag>
             
         </tags>
       
