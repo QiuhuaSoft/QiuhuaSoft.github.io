@@ -1098,15 +1098,15 @@
     
     <entry>
       <title>我的第一篇博客</title>
-      <link href="/2023/08/27/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"/>
-      <url>/2023/08/27/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+      <link href="/2023/02/27/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"/>
+      <url>/2023/02/27/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
       
-        <content type="html"><![CDATA[<p>从今天开始我就要开始写自己的博客了，我会在博客中记录并分享我在学习C#、JS、单片机或其他课程中遇到的问题和解决方案还有一些课堂笔记，如果有遇到同样问题或者想学习以上技术的小伙伴，希望我的博客可以帮助到你们。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main()&#123;</span><br><span class="line">printf(&quot;%s&quot;,&quot;欢迎来到我的博客&quot;);</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="/../images/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/%E6%99%BA%E5%95%86+1.webp"></p>]]></content>
+        <content type="html"><![CDATA[<p>从今天开始我就要开始写自己的博客了，我会在博客中记录并分享我在学习C#、前端开发、单片机或其他课程中遇到的问题和解决方案还有一些课堂笔记，如果有遇到同样问题或者想学习以上技术的小伙伴，希望我的博客可以帮助到你们。</p><p>JAVA语言由于我还没有吃透，就先给自己留个坑，可能在明年对JAVA语言以及Spring后端开发进行博客编写。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main()&#123;</span><br><span class="line">printf(&quot;%s&quot;,&quot;欢迎来到我的博客&quot;);</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="/../images/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/%E6%99%BA%E5%95%86+1.webp"></p>]]></content>
       
       
       <categories>
           
-          <category> 第一篇博客 </category>
+          <category> 日常 </category>
           
       </categories>
       
