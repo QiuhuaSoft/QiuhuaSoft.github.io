@@ -91,7 +91,7 @@
       <link href="/2023/12/22/EFCore-%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/"/>
       <url>/2023/12/22/EFCore-%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/</url>
       
-        <content type="html"><![CDATA[<h1 id="什么是表达式树"><a href="#什么是表达式树" class="headerlink" title="什么是表达式树"></a>什么是表达式树</h1><p>在之前的章节中，我们用委托的形式生成了SQL语句，但是这个生成SQL语句的过程是怎么进行的呢？<br>在编译原理这门课中会讲到表达式树：<br>将一个表达式比如b.Price&gt;5，转为一个树，这棵树的根节点是大于号，左节点是成员访问符，右节点是5，根节点的左节点的左节点是b，根节点的左节点的右节点是Price，EFCore可以通过遍历这样的表达式树生成对应的SQL语句。</p><h1 id="表达式树（Expression）和委托的不同"><a href="#表达式树（Expression）和委托的不同" class="headerlink" title="表达式树（Expression）和委托的不同"></a>表达式树（Expression）和委托的不同</h1><p>我们用Expression&lt;TDelegate&gt;类型表示表达式树，具体代码如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Expression&lt;Func&lt;Article, bool&gt;&gt; e1 = a =&gt; a.Id &gt; 5;</span><br><span class="line">    //Expression&lt;Func&lt;Article,bool&gt;&gt; f2= a =&gt; &#123; a.Id &lt; 3&#125;;注意，这样的写法不被允许，因为在语句体写法中可能夹杂其他语句导致无法翻译成表达式树</span><br><span class="line">    Func&lt;Article,bool&gt; f1=a=&gt;a.Id &gt; 5;</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(e1).ToArray();</span><br><span class="line">        ctx.Articles.Where(f1).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>通过表达式树生成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT `t`.`Id`, `t`.`IsDeleted`, `t`.`Message`, `t`.`Title`</span><br><span class="line">      FROM `T_Articles` AS `t`</span><br><span class="line">      WHERE `t`.`Id` &gt; 5</span><br></pre></td></tr></table></figure><p>通过委托生成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT `t`.`Id`, `t`.`IsDeleted`, `t`.`Message`, `t`.`Title`</span><br><span class="line">      FROM `T_Articles` AS `t`</span><br></pre></td></tr></table></figure><p>Expression对象储存了运算逻辑，它把对象逻辑保存成抽象语法树，可以在运行时动态获取运算逻辑，而普通的委托则没有。</p><h1 id="通过代码查看表达式树结构"><a href="#通过代码查看表达式树结构" class="headerlink" title="通过代码查看表达式树结构"></a>通过代码查看表达式树结构</h1><p>安装ExpressionTreeToString包，它给Expression对象扩展了ToString方法，可以看到所构建的表达式树。</p><h2 id="代码展示"><a href="#代码展示" class="headerlink" title="代码展示"></a>代码展示</h2><p>源代码：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Expression&lt;Func&lt;Article, bool&gt;&gt; e1 = a =&gt; a.Id &gt; 5;</span><br><span class="line">    Console.WriteLine(e1.ToString(&quot;Object notation&quot;,&quot;C#&quot;));</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(e1).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>控制台输出：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">var a = new ParameterExpression &#123;</span><br><span class="line">    Type = typeof(Article),</span><br><span class="line">    IsByRef = false,</span><br><span class="line">    Name = &quot;a&quot;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">new Expression&lt;Func&lt;Article, bool&gt;&gt; &#123;</span><br><span class="line">    NodeType = ExpressionType.Lambda,</span><br><span class="line">    Type = typeof(Func&lt;Article, bool&gt;),</span><br><span class="line">    Parameters = new ReadOnlyCollection&lt;ParameterExpression&gt; &#123;</span><br><span class="line">        a</span><br><span class="line">    &#125;,</span><br><span class="line">    Body = new BinaryExpression &#123;</span><br><span class="line">        NodeType = ExpressionType.GreaterThan,</span><br><span class="line">        Type = typeof(bool),</span><br><span class="line">        Left = new MemberExpression &#123;</span><br><span class="line">            Type = typeof(int),</span><br><span class="line">            Expression = a,</span><br><span class="line">            Member = typeof(Article).GetProperty(&quot;Id&quot;)</span><br><span class="line">        &#125;,</span><br><span class="line">        Right = new ConstantExpression &#123;</span><br><span class="line">            Type = typeof(int),</span><br><span class="line">            Value = 5</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    ReturnType = typeof(bool)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="通过代码动态构造表达式树"><a href="#通过代码动态构造表达式树" class="headerlink" title="通过代码动态构造表达式树"></a>通过代码动态构造表达式树</h1><p>创建出每个节点的类型，然后再给它赋值。<br>ParameterExpression、BinaryExpression、MethodCallExpression、ConstantExpression等类几乎没有提供构造函数，而且所有属性也几乎都是只读的，因此我们一般不会直接创建这些类的实例，而是调用Expression类的Parameter、MakeBinary、Call、Constant等静态方法来生成，这些静态方法我们一般称作创建表达式树的工厂方法，而属性则通过方法参数类设置。</p><h2 id="代码展示-1"><a href="#代码展示-1" class="headerlink" title="代码展示"></a>代码展示</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    ParameterExpression paramExprA = Expression.Parameter(typeof(Article), &quot;a&quot;);</span><br><span class="line">    ConstantExpression constExpr5 = Expression.Constant(5);//如果是布尔类型则需要用函数重载，显示指定它的类型</span><br><span class="line">    MemberExpression memExprId = Expression.MakeMemberAccess(paramExprA, typeof(Article).GetProperty(&quot;Id&quot;));</span><br><span class="line">    BinaryExpression binExpGreaterThan = Expression.GreaterThan(memExprId, constExpr5);</span><br><span class="line">    Expression&lt;Func&lt;Article,bool&gt;&gt; exprRoot = Expression.Lambda&lt;Func&lt;Article,bool&gt;&gt;(binExpGreaterThan, paramExprA);</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(exprRoot).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>常见工厂方法请自行查找。</p><h2 id="让动态构建表达式树更简单"><a href="#让动态构建表达式树更简单" class="headerlink" title="让动态构建表达式树更简单"></a>让动态构建表达式树更简单</h2>]]></content>
+        <content type="html"><![CDATA[<h1 id="什么是表达式树"><a href="#什么是表达式树" class="headerlink" title="什么是表达式树"></a>什么是表达式树</h1><p>在之前的章节中，我们用委托的形式生成了SQL语句，但是这个生成SQL语句的过程是怎么进行的呢？<br>在编译原理这门课中会讲到表达式树：<br>将一个表达式比如b.Price&gt;5，转为一个树，这棵树的根节点是大于号，左节点是成员访问符，右节点是5，根节点的左节点的左节点是b，根节点的左节点的右节点是Price，EFCore可以通过遍历这样的表达式树生成对应的SQL语句。</p><h1 id="表达式树（Expression）和委托的不同"><a href="#表达式树（Expression）和委托的不同" class="headerlink" title="表达式树（Expression）和委托的不同"></a>表达式树（Expression）和委托的不同</h1><p>我们用Expression&lt;TDelegate&gt;类型表示表达式树，具体代码如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Expression&lt;Func&lt;Article, bool&gt;&gt; e1 = a =&gt; a.Id &gt; 5;</span><br><span class="line">    //Expression&lt;Func&lt;Article,bool&gt;&gt; f2= a =&gt; &#123; a.Id &lt; 3&#125;;注意，这样的写法不被允许，因为在语句体写法中可能夹杂其他语句导致无法翻译成表达式树</span><br><span class="line">    Func&lt;Article,bool&gt; f1=a=&gt;a.Id &gt; 5;</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(e1).ToArray();</span><br><span class="line">        ctx.Articles.Where(f1).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>通过表达式树生成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT `t`.`Id`, `t`.`IsDeleted`, `t`.`Message`, `t`.`Title`</span><br><span class="line">      FROM `T_Articles` AS `t`</span><br><span class="line">      WHERE `t`.`Id` &gt; 5</span><br></pre></td></tr></table></figure><p>通过委托生成：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT `t`.`Id`, `t`.`IsDeleted`, `t`.`Message`, `t`.`Title`</span><br><span class="line">      FROM `T_Articles` AS `t`</span><br></pre></td></tr></table></figure><p>Expression对象储存了运算逻辑，它把对象逻辑保存成抽象语法树，可以在运行时动态获取运算逻辑，而普通的委托则没有。</p><h1 id="通过代码查看表达式树结构"><a href="#通过代码查看表达式树结构" class="headerlink" title="通过代码查看表达式树结构"></a>通过代码查看表达式树结构</h1><p>安装ExpressionTreeToString包，它给Expression对象扩展了ToString方法，可以看到所构建的表达式树。</p><h2 id="代码展示"><a href="#代码展示" class="headerlink" title="代码展示"></a>代码展示</h2><p>源代码：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Expression&lt;Func&lt;Article, bool&gt;&gt; e1 = a =&gt; a.Id &gt; 5;</span><br><span class="line">    Console.WriteLine(e1.ToString(&quot;Object notation&quot;,&quot;C#&quot;));</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(e1).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>控制台输出：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">var a = new ParameterExpression &#123;</span><br><span class="line">    Type = typeof(Article),</span><br><span class="line">    IsByRef = false,</span><br><span class="line">    Name = &quot;a&quot;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">new Expression&lt;Func&lt;Article, bool&gt;&gt; &#123;</span><br><span class="line">    NodeType = ExpressionType.Lambda,</span><br><span class="line">    Type = typeof(Func&lt;Article, bool&gt;),</span><br><span class="line">    Parameters = new ReadOnlyCollection&lt;ParameterExpression&gt; &#123;</span><br><span class="line">        a</span><br><span class="line">    &#125;,</span><br><span class="line">    Body = new BinaryExpression &#123;</span><br><span class="line">        NodeType = ExpressionType.GreaterThan,</span><br><span class="line">        Type = typeof(bool),</span><br><span class="line">        Left = new MemberExpression &#123;</span><br><span class="line">            Type = typeof(int),</span><br><span class="line">            Expression = a,</span><br><span class="line">            Member = typeof(Article).GetProperty(&quot;Id&quot;)</span><br><span class="line">        &#125;,</span><br><span class="line">        Right = new ConstantExpression &#123;</span><br><span class="line">            Type = typeof(int),</span><br><span class="line">            Value = 5</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    ReturnType = typeof(bool)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="通过代码动态构造表达式树"><a href="#通过代码动态构造表达式树" class="headerlink" title="通过代码动态构造表达式树"></a>通过代码动态构造表达式树</h1><p>创建出每个节点的类型，然后再给它赋值。<br>ParameterExpression、BinaryExpression、MethodCallExpression、ConstantExpression等类几乎没有提供构造函数，而且所有属性也几乎都是只读的，因此我们一般不会直接创建这些类的实例，而是调用Expression类的Parameter、MakeBinary、Call、Constant等静态方法来生成，这些静态方法我们一般称作创建表达式树的工厂方法，而属性则通过方法参数类设置。</p><h2 id="代码展示-1"><a href="#代码展示-1" class="headerlink" title="代码展示"></a>代码展示</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    ParameterExpression paramExprA = Expression.Parameter(typeof(Article), &quot;a&quot;);</span><br><span class="line">    ConstantExpression constExpr5 = Expression.Constant(5);//如果是布尔类型则需要用函数重载，显示指定它的类型</span><br><span class="line">    MemberExpression memExprId = Expression.MakeMemberAccess(paramExprA, typeof(Article).GetProperty(&quot;Id&quot;));</span><br><span class="line">    BinaryExpression binExpGreaterThan = Expression.GreaterThan(memExprId, constExpr5);</span><br><span class="line">    Expression&lt;Func&lt;Article,bool&gt;&gt; exprRoot = Expression.Lambda&lt;Func&lt;Article,bool&gt;&gt;(binExpGreaterThan, paramExprA);</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(exprRoot).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>常见工厂方法请自行查找。</p><h2 id="让构建表达式树更简单"><a href="#让构建表达式树更简单" class="headerlink" title="让构建表达式树更简单"></a>让构建表达式树更简单</h2><p>我们可以使用ExpressionTreeToString包提供的ToString方法，只要将ToString方法的参数写成以下形式就行。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Expression&lt;Func&lt;Article, bool&gt;&gt; e1 = a =&gt; a.Id &gt; 5;</span><br><span class="line">    Console.WriteLine(e1.ToString(&quot;Factory methods&quot;,&quot;C#&quot;));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>以上代码生成如下内容：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// using static System.Linq.Expressions.Expression</span><br><span class="line"></span><br><span class="line">var a = Parameter(</span><br><span class="line">    typeof(Article),</span><br><span class="line">    &quot;a&quot;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">Lambda(</span><br><span class="line">    GreaterThan(</span><br><span class="line">        MakeMemberAccess(a,</span><br><span class="line">            typeof(Article).GetProperty(&quot;Id&quot;)</span><br><span class="line">        ),</span><br><span class="line">        Constant(5)</span><br><span class="line">    ),</span><br><span class="line">    a</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>只需将它粘贴到代码中稍作修改即可：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args) &#123;</span><br><span class="line">    Console.WriteLine(&quot;请输入 1：小于，2：大于&quot;);</span><br><span class="line">    string s = Console.ReadLine();</span><br><span class="line">    var a = Parameter(typeof(Article),&quot;a&quot; );</span><br><span class="line">    BinaryExpression binaryCompare;</span><br><span class="line">    if (s == &quot;1&quot;) &#123;</span><br><span class="line">        binaryCompare = LessThan(MakeMemberAccess(a,typeof(Article).GetProperty(&quot;Id&quot;)), Constant(5));</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        binaryCompare = GreaterThan(MakeMemberAccess(a, typeof(Article).GetProperty(&quot;Id&quot;)), Constant(5));</span><br><span class="line">    &#125;</span><br><span class="line">    var expr = Lambda&lt;Func&lt;Article,bool&gt;&gt;(binaryCompare, a);</span><br><span class="line">    using(var ctx = new MyDbContext()) &#123;</span><br><span class="line">        ctx.Articles.Where(expr).ToArray();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="动态构建表达式树代码举例"><a href="#动态构建表达式树代码举例" class="headerlink" title="动态构建表达式树代码举例"></a>动态构建表达式树代码举例</h2><p>修改Article类，override ToString方法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Article</span><br><span class="line">&#123;</span><br><span class="line">    public int Id &#123; get; set; &#125;</span><br><span class="line">    public string Title &#123; get; set; &#125;</span><br><span class="line">    public string Message &#123; get; set; &#125;</span><br><span class="line">    public List&lt;Comment&gt; Comments = new List&lt;Comment&gt;();//实体类中关系属性</span><br><span class="line">    public bool IsDeleted &#123; get; set; &#125;</span><br><span class="line">    public override string ToString() &#123;</span><br><span class="line">        return $&quot;ID：&#123;Id&#125;，Title：&#123;Title&#125;，Message：&#123;Message&#125;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Program.cs</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">using ExpressionTreeToString;</span><br><span class="line">using Interview.一对多;</span><br><span class="line">using System.Linq.Expressions;</span><br><span class="line">using static System.Linq.Expressions.Expression;</span><br><span class="line">namespace Interview</span><br><span class="line">&#123;</span><br><span class="line">    internal class Program &#123;</span><br><span class="line">        static void Main(string[] args) &#123;</span><br><span class="line">            var aritcles1 = QueryAritcles(&quot;Id&quot;, 8.0);</span><br><span class="line">            foreach(var aritcle in aritcles1) &#123;</span><br><span class="line">                Console.WriteLine(&quot;====================================&quot;);</span><br><span class="line">                Console.WriteLine(aritcle);</span><br><span class="line">            &#125;</span><br><span class="line">            var aritcles2 = QueryAritcles(&quot;Title&quot;, &quot;T1&quot;);</span><br><span class="line">            foreach (var aritcle in aritcles2) &#123;</span><br><span class="line">                Console.WriteLine(&quot;====================================&quot;);</span><br><span class="line">                Console.WriteLine(aritcle);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        static IEnumerable&lt;Article&gt; QueryAritcles(string property,object value) &#123;</span><br><span class="line">            var a = Parameter(</span><br><span class="line">                typeof(Article),</span><br><span class="line">                &quot;a&quot;</span><br><span class="line">            );</span><br><span class="line">            var proType = typeof(Article).GetProperty(property);</span><br><span class="line">            var valType = proType.PropertyType;</span><br><span class="line">            Expression&lt;Func&lt;Article, bool&gt;&gt; expr;</span><br><span class="line">            if (value.GetType().IsPrimitive) &#123;</span><br><span class="line">                //如果是原始数据类型</span><br><span class="line">                expr = Lambda&lt;Func&lt;Article, bool&gt;&gt;(</span><br><span class="line">                    Equal(</span><br><span class="line">                        MakeMemberAccess(a, proType),</span><br><span class="line">                        Constant(System.Convert.ChangeType(value,valType))</span><br><span class="line">                    ),</span><br><span class="line">                    a</span><br><span class="line">                );</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                //如果是复杂数据类型</span><br><span class="line">                expr = Lambda&lt;Func&lt;Article,bool&gt;&gt;(</span><br><span class="line">                    Call(</span><br><span class="line">                        MakeMemberAccess(a,proType),</span><br><span class="line">                        value.GetType().GetMethod(&quot;Contains&quot;, new[] &#123; value.GetType() &#125;),</span><br><span class="line">                        Constant(System.Convert.ChangeType(value, valType))</span><br><span class="line">                    ),</span><br><span class="line">                    a</span><br><span class="line">                );</span><br><span class="line">            &#125;</span><br><span class="line">            using (var ctx = new MyDbContext()) &#123;</span><br><span class="line">                return ctx.Articles.Where(expr).ToList();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -448,11 +448,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> WebSocket </tag>
             
@@ -481,11 +481,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 校验机制 </tag>
             
@@ -514,11 +514,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 托管服务 </tag>
             
@@ -545,11 +545,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> JWT </tag>
             
@@ -576,11 +576,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 标识框架 </tag>
             
@@ -607,11 +607,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -640,11 +640,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -673,11 +673,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> EFCore </tag>
             
@@ -704,11 +704,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 配置系统 </tag>
             
@@ -766,9 +766,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -799,9 +799,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -830,9 +830,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -1334,11 +1334,11 @@
       
         <tags>
             
+            <tag> ArrayList </tag>
+            
             <tag> C# </tag>
             
             <tag> .Net </tag>
-            
-            <tag> ArrayList </tag>
             
         </tags>
       
@@ -1544,13 +1544,13 @@
             
             <tag> .Net </tag>
             
-            <tag> 构造函数 </tag>
-            
             <tag> 屏蔽 </tag>
             
             <tag> 基类访问 </tag>
             
             <tag> 基类引用 </tag>
+            
+            <tag> 构造函数 </tag>
             
         </tags>
       
@@ -1645,13 +1645,13 @@
             
             <tag> .Net </tag>
             
+            <tag> 构造函数 </tag>
+            
             <tag> 类 </tag>
             
             <tag> 属性 </tag>
             
             <tag> 方法 </tag>
-            
-            <tag> 构造函数 </tag>
             
             <tag> 静态构造函数 </tag>
             
