@@ -417,7 +417,7 @@
       <link href="/2023/09/18/Asp.NetCore-SignalR/"/>
       <url>/2023/09/18/Asp.NetCore-SignalR/</url>
       
-        <content type="html"><![CDATA[<h1 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h1><p>需求：Web聊天、站内通知<br>传统HTTP只能客户端主动发送请求<br>传统长轮询方式性能差，不推荐使用<br>基于Tcp协议，支持二进制通信，双工通信<br>性能和并发能力强<br>WebSocket独立于HTTP协议，不过我们一般仍然把WebSocket服务器端部署到Web服务器，因为可以借助HTTP协议完成初始的握手（可选），并且共享HTTP服务器的端口（主要），通过请求的特点决定将请求交给HTTP处理程序或者WebSocket处理程序。</p><h1 id="ASP-NET-Core-SignalR"><a href="#ASP-NET-Core-SignalR" class="headerlink" title="ASP.NET Core SignalR"></a>ASP.NET Core SignalR</h1><p>1、SignalR是对.NET Core平台下对WebSocket的封装<br>2、Hub（集线器）类似于路由器，是数据交换中心</p><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>创建web api项目，创建一个继承Hub的类</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyHub : Hub&#123;</span><br><span class="line">//这个方法名由客户端调用</span><br><span class="line">    public Task SendPublicMsgAsync(string msg) &#123;</span><br><span class="line">        string connId = this.Context.ConnectionId;</span><br><span class="line">        string msgToSend = $&quot;&#123;connId&#125; &#123;DateTime.Now&#125;：&#123;msg&#125;&quot;;</span><br><span class="line">        //双方规定好用&quot;PublicMsgReceived&quot;作为消息名，在前端会有名为&quot;PublicMsgReceived&quot;的事件</span><br><span class="line">        return this.Clients.All.SendAsync(&quot;PublicMsgReceived&quot;, msgToSend);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//Program.cs</span><br><span class="line">builder.Services.AddSignalR();</span><br><span class="line">//记得允许跨域</span><br><span class="line">builder.Services.AddCors(options =&gt; &#123;</span><br><span class="line">    options.AddDefaultPolicy(</span><br><span class="line">        policy =&gt; &#123;</span><br><span class="line">            policy.WithOrigins(&quot;http://127.0.0.1:5173&quot;)</span><br><span class="line">                                .AllowAnyHeader()</span><br><span class="line">                                .AllowAnyMethod()</span><br><span class="line">                                .AllowCredentials();</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;);</span><br><span class="line">...</span><br><span class="line">app.UseCors();</span><br><span class="line">app.UseAuthorization();</span><br><span class="line">app.MapHub&lt;MyHub&gt;(&quot;/MyHub&quot;);</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">//前端代码</span><br><span class="line">//记得npm下载npm i @microsoft/signalr</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import &#123;reactive,onMounted&#125; from &#x27;vue&#x27;;</span><br><span class="line">import * as signalR from &#x27;@microsoft/signalr&#x27;;</span><br><span class="line">export default&#123;</span><br><span class="line">setup()&#123;</span><br><span class="line">let connection;</span><br><span class="line">const state = reactive(&#123;userMsg:&quot;&quot;,message:[]&#125;);</span><br><span class="line">const textMsgOnKeyPress = async function(e)&#123;</span><br><span class="line">if(e.keyCode!=13) return;</span><br><span class="line">//参数1：调用的signalR方法名，参数2：传递的参数</span><br><span class="line">await connection.invoke(&quot;SendPublicMsgAsync&quot;,state.userMsg);</span><br><span class="line">state.userMsg = &quot;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">onMounted(async()=&gt;&#123;</span><br><span class="line">connection = new signalR.HubConnectionBuilder()</span><br><span class="line">.withUrl(&quot;https://localhost:7020/MyHub&quot;)</span><br><span class="line">.withAutomaticReconnect()</span><br><span class="line">.build();</span><br><span class="line">await connection.start();</span><br><span class="line">//参数1：约定的消息名，参数2：回调</span><br><span class="line">connection.on(&quot;PublicMsgReceived&quot;,rcvMsg=&gt;&#123;</span><br><span class="line">state.message.push(rcvMsg);</span><br><span class="line">&#125;)</span><br><span class="line">&#125;)</span><br><span class="line">return &#123;state,textMsgOnKeyPress&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; v-model=&quot;state.userMsg&quot; v-on:keypress=&quot;textMsgOnKeyPress&quot;&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">&lt;li v-for=&quot;(msg,index) in state.message&quot; :key=&quot;index&quot;&gt;&#123;&#123;msg&#125;&#125;&lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure><h2 id="协议协商"><a href="#协议协商" class="headerlink" title="协议协商"></a>协议协商</h2><p>signalR不仅支持WebSocket还支持ServerSent Events、长轮询。<br>浏览器会先使用http请求通过nagotiate告诉服务器自己支持哪种方式，默认按照WebSocket、ServerSent Events、长轮询的顺序尝试。<br>IE浏览器支持WebSocket但signalR的javascript客户端不支持IE浏览器。</p><h2 id="协商带来的问题"><a href="#协商带来的问题" class="headerlink" title="协商带来的问题"></a>协商带来的问题</h2><p>1、集群中协议协商的问题：“协商”请求被服务器A处理，但接下来建立WebSocket请求却被服务器B处理。<br>2、解决方法：粘性会话和禁用协商。<br>3、“粘性会话”：把来自同一客户端的请求都转发到同一服务器上。缺点：因为共享公网IP等造成请求无法被平均的分配到服务器集群；扩容的自适应性不强。<br>4、“禁用协商”：直接向服务器发送WebSocket请求，WebSocket一旦建立，就形成了服务器和客户端持久连接的通道，在该连接中的后续往返WebSocket通信都是由同一台服务器处理。缺点：无法降级到ServerSent Events和长轮询，但是问题不大。<br>5、如果需要使用禁用协商，请参考微软文档，在javascript创建WebSocket时传入所需的配置项。</p><h2 id="SignalR的分布式部署"><a href="#SignalR的分布式部署" class="headerlink" title="SignalR的分布式部署"></a>SignalR的分布式部署</h2><p>问题：如果客户端连接到了不同的服务器，那么通过SignalR发送的消息很可能因为服务器不同的原因而接受不到。<br>解决方案：分布式部署，所有服务器连接到同一个消息中间件。在粘性会话或者禁用协商的模式下，分布式部署才有意义。<br>Nuget：安装Microsoft.AspNetCore.SignalR.StackExchangeRedis。<br>使用：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">builder.Services.AddSignalR().AddStackExchangeRedis(&quot;127.0.0.1&quot;, opt =&gt; &#123;</span><br><span class="line">    opt.Configuration.ChannelPrefix = &quot;localhost1_&quot;;//避免数据混乱，添加前缀</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><h1 id="SignalR的身份认证"><a href="#SignalR的身份认证" class="headerlink" title="SignalR的身份认证"></a>SignalR的身份认证</h1><p>敬请期待</p>]]></content>
+        <content type="html"><![CDATA[<h1 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h1><p>需求：Web聊天、站内通知<br>传统HTTP只能客户端主动发送请求<br>传统长轮询方式性能差，不推荐使用<br>基于Tcp协议，支持二进制通信，双工通信<br>性能和并发能力强<br>WebSocket独立于HTTP协议，不过我们一般仍然把WebSocket服务器端部署到Web服务器，因为可以借助HTTP协议完成初始的握手（可选），并且共享HTTP服务器的端口（主要），通过请求的特点决定将请求交给HTTP处理程序或者WebSocket处理程序。</p><h1 id="ASP-NET-Core-SignalR"><a href="#ASP-NET-Core-SignalR" class="headerlink" title="ASP.NET Core SignalR"></a>ASP.NET Core SignalR</h1><p>1、SignalR是对.NET Core平台下对WebSocket的封装<br>2、Hub（集线器）类似于路由器，是数据交换中心</p><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>创建web api项目，创建一个继承Hub的类</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyHub : Hub&#123;</span><br><span class="line">//这个方法名由客户端调用</span><br><span class="line">    public Task SendPublicMsgAsync(string msg) &#123;</span><br><span class="line">        string connId = this.Context.ConnectionId;</span><br><span class="line">        string msgToSend = $&quot;&#123;connId&#125; &#123;DateTime.Now&#125;：&#123;msg&#125;&quot;;</span><br><span class="line">        //双方规定好用&quot;PublicMsgReceived&quot;作为消息名，在前端会有名为&quot;PublicMsgReceived&quot;的事件</span><br><span class="line">        return this.Clients.All.SendAsync(&quot;PublicMsgReceived&quot;, msgToSend);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//Program.cs</span><br><span class="line">builder.Services.AddSignalR();</span><br><span class="line">//记得允许跨域</span><br><span class="line">builder.Services.AddCors(options =&gt; &#123;</span><br><span class="line">    options.AddDefaultPolicy(</span><br><span class="line">        policy =&gt; &#123;</span><br><span class="line">            policy.WithOrigins(&quot;http://127.0.0.1:5173&quot;)</span><br><span class="line">                                .AllowAnyHeader()</span><br><span class="line">                                .AllowAnyMethod()</span><br><span class="line">                                .AllowCredentials();</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;);</span><br><span class="line">...</span><br><span class="line">app.UseCors();</span><br><span class="line">app.UseAuthorization();</span><br><span class="line">app.MapHub&lt;MyHub&gt;(&quot;/MyHub&quot;);</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">//前端代码</span><br><span class="line">//记得npm下载npm i @microsoft/signalr</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import &#123;reactive,onMounted&#125; from &#x27;vue&#x27;;</span><br><span class="line">import * as signalR from &#x27;@microsoft/signalr&#x27;;</span><br><span class="line">export default&#123;</span><br><span class="line">setup()&#123;</span><br><span class="line">let connection;</span><br><span class="line">const state = reactive(&#123;userMsg:&quot;&quot;,message:[]&#125;);</span><br><span class="line">const textMsgOnKeyPress = async function(e)&#123;</span><br><span class="line">if(e.keyCode!=13) return;</span><br><span class="line">//参数1：调用的signalR方法名，参数2：传递的参数</span><br><span class="line">await connection.invoke(&quot;SendPublicMsgAsync&quot;,state.userMsg);</span><br><span class="line">state.userMsg = &quot;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">onMounted(async()=&gt;&#123;</span><br><span class="line">connection = new signalR.HubConnectionBuilder()</span><br><span class="line">.withUrl(&quot;https://localhost:7020/MyHub&quot;)</span><br><span class="line">.withAutomaticReconnect()</span><br><span class="line">.build();</span><br><span class="line">await connection.start();</span><br><span class="line">//参数1：约定的消息名，参数2：回调</span><br><span class="line">connection.on(&quot;PublicMsgReceived&quot;,rcvMsg=&gt;&#123;</span><br><span class="line">state.message.push(rcvMsg);</span><br><span class="line">&#125;)</span><br><span class="line">&#125;)</span><br><span class="line">return &#123;state,textMsgOnKeyPress&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; v-model=&quot;state.userMsg&quot; v-on:keypress=&quot;textMsgOnKeyPress&quot;&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">&lt;li v-for=&quot;(msg,index) in state.message&quot; :key=&quot;index&quot;&gt;&#123;&#123;msg&#125;&#125;&lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure><h2 id="协议协商"><a href="#协议协商" class="headerlink" title="协议协商"></a>协议协商</h2><p>signalR不仅支持WebSocket还支持ServerSent Events、长轮询。<br>浏览器会先使用http请求通过nagotiate告诉服务器自己支持哪种方式，默认按照WebSocket、ServerSent Events、长轮询的顺序尝试。<br>IE浏览器支持WebSocket但signalR的javascript客户端不支持IE浏览器。</p><h2 id="协商带来的问题"><a href="#协商带来的问题" class="headerlink" title="协商带来的问题"></a>协商带来的问题</h2><p>1、集群中协议协商的问题：“协商”请求被服务器A处理，但接下来建立WebSocket请求却被服务器B处理。<br>2、解决方法：粘性会话和禁用协商。<br>3、“粘性会话”：把来自同一客户端的请求都转发到同一服务器上。缺点：因为共享公网IP等造成请求无法被平均的分配到服务器集群；扩容的自适应性不强。<br>4、“禁用协商”：直接向服务器发送WebSocket请求，WebSocket一旦建立，就形成了服务器和客户端持久连接的通道，在该连接中的后续往返WebSocket通信都是由同一台服务器处理。缺点：无法降级到ServerSent Events和长轮询，但是问题不大。<br>5、如果需要使用禁用协商，请参考微软文档，在javascript创建WebSocket时传入所需的配置项。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">onMounted(async()=&gt;&#123;</span><br><span class="line">connection = new signalR.HubConnectionBuilder()</span><br><span class="line">.withUrl(&quot;https://localhost:7020/MyHub&quot;,&#123;</span><br><span class="line">    skipNegotiation:true,</span><br><span class="line">    transport:signalR.HttpTransportType.WebSockets</span><br><span class="line">&#125;)</span><br><span class="line">.withAutomaticReconnect()</span><br><span class="line">.build();</span><br><span class="line">await connection.start();</span><br><span class="line">//参数1：约定的消息名，参数2：回调</span><br><span class="line">connection.on(&quot;PublicMsgReceived&quot;,rcvMsg=&gt;&#123;</span><br><span class="line">state.message.push(rcvMsg);</span><br><span class="line">&#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><h2 id="SignalR的分布式部署"><a href="#SignalR的分布式部署" class="headerlink" title="SignalR的分布式部署"></a>SignalR的分布式部署</h2><p>问题：如果客户端连接到了不同的服务器，那么通过SignalR发送的消息很可能因为服务器不同的原因而接受不到。<br>解决方案：分布式部署，所有服务器连接到同一个消息中间件。在粘性会话或者禁用协商的模式下，分布式部署才有意义。<br>官方方案：redis backplane<br>Nuget：安装Microsoft.AspNetCore.SignalR.StackExchangeRedis。<br>使用：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">builder.Services.AddSignalR().AddStackExchangeRedis(&quot;127.0.0.1(redis服务器地址)&quot;, opt =&gt; &#123;</span><br><span class="line">    opt.Configuration.ChannelPrefix = &quot;localhost1_&quot;;//避免和其他连接到这个服务端的redis冲突，添加前缀（非必须）</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><h1 id="SignalR的身份认证"><a href="#SignalR的身份认证" class="headerlink" title="SignalR的身份认证"></a>SignalR的身份认证</h1><p>ebsocket不支持自定义报文头，所以我们需要把JWT通过url中的QueryString传递，然后再服务器端的OnMessageReceived中，把QueryString中的jwt读取出来赋值给context.Token，后续中间件会从context.Token中解析jwt</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =&gt; &#123;</span><br><span class="line">    var jwtSettings = builder.Configuration.GetSection(&quot;JWT&quot;).Get&lt;JwtSetting&gt;();</span><br><span class="line">    byte[] keyBytes = Encoding.UTF8.GetBytes(jwtSettings.SecKey);</span><br><span class="line">    var secKey = new SymmetricSecurityKey(keyBytes);</span><br><span class="line">    opt.TokenValidationParameters = new() &#123;</span><br><span class="line">        ValidateIssuer = false,</span><br><span class="line">        ValidateAudience = false,</span><br><span class="line">        ValidateLifetime = true,</span><br><span class="line">        ValidateIssuerSigningKey = true,</span><br><span class="line">        IssuerSigningKey = secKey</span><br><span class="line">    &#125;;</span><br><span class="line">    opt.Events = new JwtBearerEvents &#123;</span><br><span class="line">        OnMessageReceived = context =&gt; &#123;</span><br><span class="line">            //websocket不支持自定义报文头，所以我们需要把JWT通过url中的QueryString传递，然后再服务器端的OnMessageReceived中，把QueryString中的jwt读取出来赋值给context.Token</span><br><span class="line">            var accessToken = context.Request.Query[&quot;access_token&quot;];</span><br><span class="line">            var path = context.Request.Path;</span><br><span class="line">            if(!string.IsNullOrEmpty(accessToken) &amp;&amp; path.StartsWithSegments(&quot;/MyHub&quot;)) &#123;</span><br><span class="line">                context.Token=accessToken;</span><br><span class="line">            &#125;</span><br><span class="line">            return Task.CompletedTask;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;);</span><br><span class="line">......</span><br><span class="line">//在app.UseAuthorization之前添加app.UseAuthentication</span><br><span class="line">app.UseAuthentication();</span><br><span class="line">app.UseAuthorization();</span><br></pre></td></tr></table></figure><p>在登录的时候向客户端返回jwt，然后在需要登录才能访问的集线器类上或者方法上添加[Authorize]。也支持角色等设置，可以设置到Hub或者方法上</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//[Authorize(Roles =&quot;admin&quot;)]</span><br><span class="line">[Authorize]</span><br><span class="line">public class MyHub:Hub &#123;</span><br><span class="line">    public async Task SendMessage(string user, string message) &#123;</span><br><span class="line">        await Clients.All.SendAsync(&quot;ReceiveMessage&quot;, user, message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>前端代码需要传递access_token</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">//前端代码</span><br><span class="line">//记得npm下载npm i @microsoft/signalr</span><br><span class="line">&lt;script&gt;</span><br><span class="line">import &#123; reactive, onMounted &#125; from &#x27;vue&#x27;;</span><br><span class="line">import * as signalR from &#x27;@microsoft/signalr&#x27;;</span><br><span class="line">import axios from &quot;axios&quot;</span><br><span class="line">export default &#123;</span><br><span class="line">    setup() &#123;</span><br><span class="line">        let connection;</span><br><span class="line">        const state = reactive(&#123; userMsg: &quot;&quot;, message: [], userName: &quot;&quot;, password: &quot;&quot; &#125;);</span><br><span class="line">        const textMsgOnKeyPress = async function (e) &#123;</span><br><span class="line">            if (e.keyCode != 13) return;</span><br><span class="line">            //参数1：调用的signalR方法名，参数2：传递的参数</span><br><span class="line">            await connection.invoke(&quot;SendPublicMsgAsync&quot;, state.userMsg);</span><br><span class="line">            state.userMsg = &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        let login = async () =&gt; &#123;</span><br><span class="line">            let payload = &#123; userName: state.userName, password: state.password &#125;</span><br><span class="line">            axios.get(&quot;https://localhost:7020/Test/Login&quot;, payload).then(async res =&gt; &#123;</span><br><span class="line">                let token = res.data;</span><br><span class="line">                var opt = &#123;&#125;;</span><br><span class="line">                opt.accessTokenFactory = () =&gt; token;</span><br><span class="line">                connection = new signalR.HubConnectionBuilder()</span><br><span class="line">                    .withUrl(&quot;https://localhost:7020/MyHub&quot;,opt)</span><br><span class="line">                    .withAutomaticReconnect()</span><br><span class="line">                    .build();</span><br><span class="line">                await connection.start();</span><br><span class="line">                //参数1：约定的消息名，参数2：回调</span><br><span class="line">                connection.on(&quot;PublicMsgReceived&quot;, rcvMsg =&gt; &#123;</span><br><span class="line">                    state.message.push(rcvMsg);</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        return &#123; state, textMsgOnKeyPress, login &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;input type=&quot;text&quot; v-model=&quot;state.userMsg&quot; v-on:keypress=&quot;textMsgOnKeyPress&quot;&gt;</span><br><span class="line">        用户名：&lt;input type=&quot;text&quot; v-model=&quot;state.userName&quot; /&gt;</span><br><span class="line">        密码：&lt;input type=&quot;password&quot; v-model=&quot;state.password&quot; /&gt;</span><br><span class="line">        &lt;button @click=&quot;login&quot;&gt;登录&lt;/button&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ul&gt;</span><br><span class="line">                &lt;li v-for=&quot;(msg, index) in state.message&quot; :key=&quot;index&quot;&gt;&#123;&#123; msg &#125;&#125;&lt;/li&gt;</span><br><span class="line">            &lt;/ul&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped&gt;&lt;/style&gt;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -429,11 +429,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> WebSocket </tag>
             
@@ -462,11 +462,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 校验机制 </tag>
             
@@ -495,11 +495,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 托管服务 </tag>
             
@@ -526,11 +526,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> JWT </tag>
             
@@ -557,11 +557,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 标识框架 </tag>
             
@@ -588,11 +588,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -621,11 +621,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -654,11 +654,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> EFCore </tag>
             
@@ -685,11 +685,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 配置系统 </tag>
             
@@ -747,9 +747,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -780,9 +780,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -811,9 +811,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -1315,11 +1315,11 @@
       
         <tags>
             
+            <tag> ArrayList </tag>
+            
             <tag> C# </tag>
             
             <tag> .Net </tag>
-            
-            <tag> ArrayList </tag>
             
         </tags>
       
@@ -1525,13 +1525,13 @@
             
             <tag> .Net </tag>
             
+            <tag> 构造函数 </tag>
+            
             <tag> 屏蔽 </tag>
             
             <tag> 基类访问 </tag>
             
             <tag> 基类引用 </tag>
-            
-            <tag> 构造函数 </tag>
             
         </tags>
       
@@ -1626,13 +1626,13 @@
             
             <tag> .Net </tag>
             
-            <tag> 构造函数 </tag>
-            
             <tag> 类 </tag>
             
             <tag> 属性 </tag>
             
             <tag> 方法 </tag>
+            
+            <tag> 构造函数 </tag>
             
             <tag> 静态构造函数 </tag>
             
