@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SQLite3-DQL基本查询 | 知识改变命运</title><meta name="author" content="刘嘉骅"><meta name="copyright" content="刘嘉骅"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="SELECT语句语句定义SQLite 的 SELECT 语句用于从 SQLite 数据库表中获取数据，以结果表的形式返回数据。这些结果表也被称为结果集。 代码示例语法如下： 1SELECT column1, column2, columnN FROM table_name;  1）查询某些列的内容 1sqlite&gt; SELECT ID, NAME, SALARY FROM COMPANY;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLite3-DQL基本查询">
+<meta property="og:url" content="https://qiuhuasoft.github.io/2024/04/26/SQLite3-DQL%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2/index.html">
+<meta property="og:site_name" content="知识改变命运">
+<meta property="og:description" content="SELECT语句语句定义SQLite 的 SELECT 语句用于从 SQLite 数据库表中获取数据，以结果表的形式返回数据。这些结果表也被称为结果集。 代码示例语法如下： 1SELECT column1, column2, columnN FROM table_name;  1）查询某些列的内容 1sqlite&gt; SELECT ID, NAME, SALARY FROM COMPANY;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp">
+<meta property="article:published_time" content="2024-04-26T01:26:50.000Z">
+<meta property="article:modified_time" content="2024-04-26T04:11:32.496Z">
+<meta property="article:author" content="刘嘉骅">
+<meta property="article:tag" content="SQLite3">
+<meta property="article:tag" content="DQL语句">
+<meta property="article:tag" content="select">
+<meta property="article:tag" content="like">
+<meta property="article:tag" content="blob">
+<meta property="article:tag" content="order by">
+<meta property="article:tag" content="group by">
+<meta property="article:tag" content="limit">
+<meta property="article:tag" content="having">
+<meta property="article:tag" content="distinct">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiuhuasoft.github.io/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp"><link rel="shortcut icon" href="/images/avatar.jpg"><link rel="canonical" href="https://qiuhuasoft.github.io/2024/04/26/SQLite3-DQL%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SQLite3-DQL基本查询',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-04-26 12:11:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">79</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">189</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="知识改变命运"><span class="site-name">知识改变命运</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SQLite3-DQL基本查询</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-26T01:26:50.000Z" title="发表于 2024-04-26 09:26:50">2024-04-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-04-26T04:11:32.496Z" title="更新于 2024-04-26 12:11:32">2024-04-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/SQLite3/">SQLite3</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SQLite3-DQL基本查询"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="SELECT语句"><a href="#SELECT语句" class="headerlink" title="SELECT语句"></a>SELECT语句</h1><h2 id="语句定义"><a href="#语句定义" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 SELECT 语句用于从 SQLite 数据库表中获取数据，以结果表的形式返回数据。这些结果表也被称为结果集。</p>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><p>语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, columnN <span class="keyword">FROM</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p>1）查询某些列的内容</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> ID, NAME, SALARY <span class="keyword">FROM</span> COMPANY;</span><br></pre></td></tr></table></figure>
+
+<p>2）查询全部列的内容</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY;</span><br></pre></td></tr></table></figure>
+
+<h1 id="LIKE语句"><a href="#LIKE语句" class="headerlink" title="LIKE语句"></a>LIKE语句</h1><h2 id="语句定义-1"><a href="#语句定义-1" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 LIKE 运算符是用来匹配通配符指定模式的文本值。如果搜索表达式与模式表达式匹配，LIKE 运算符将返回真（true），也就是 1。这里有两个通配符与 LIKE 运算符一起使用：<br>百分号 （%）<br>下划线 （_）<br>百分号（%）代表零个、一个或多个数字或字符。下划线（_）代表一个单一的数字或字符。这些符号可以被组合使用。</p>
+<h2 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h2><p>AGE以2开头：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">WHERE</span> AGE  <span class="keyword">LIKE</span> <span class="string">&#x27;2%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>COMPANY 表中 ADDRESS 文本里包含一个连字符（-）的所有记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">WHERE</span> ADDRESS  <span class="keyword">LIKE</span> <span class="string">&#x27;%-%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="GLOB语句"><a href="#GLOB语句" class="headerlink" title="GLOB语句"></a>GLOB语句</h1><h2 id="语句定义-2"><a href="#语句定义-2" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 GLOB 运算符是用来匹配通配符指定模式的文本值。如果搜索表达式与模式表达式匹配，GLOB 运算符将返回真（true），也就是 1。与 LIKE 运算符不同的是，GLOB 是大小写敏感的，对于下面的通配符，它遵循 UNIX 的语法。<br>*：匹配零个、一个或多个数字或字符。<br>?：代表一个单一的数字或字符。<br>[…]：匹配方括号内指定的字符之一。例如，[abc] 匹配 “a”、”b” 或 “c” 中的任何一个字符。<br>[^…]：匹配不在方括号内指定的字符之一。例如，[^abc] 匹配不是 “a”、”b” 或 “c” 中的任何一个字符的字符。<br>以上这些符号可以被组合使用。</p>
+<h2 id="代码示例-2"><a href="#代码示例-2" class="headerlink" title="代码示例"></a>代码示例</h2><p>显示 COMPANY 表中 AGE 以 2 开头的所有记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">WHERE</span> AGE  GLOB <span class="string">&#x27;2*&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>显示 COMPANY 表中 ADDRESS 文本里包含一个连字符（-）的所有记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">WHERE</span> ADDRESS  GLOB <span class="string">&#x27;*-*&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>[…] 表达式用于匹配方括号内指定的字符集中的任何一个字符。<br>实例 1：匹配以 “A” 或 “B” 开头的产品名称。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> products <span class="keyword">WHERE</span> product_name <span class="keyword">LIKE</span> <span class="string">&#x27;[AB]%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>[^…] 表达式用于匹配不在方括号内指定的字符集中的任何字符。<br>实例 1：匹配不以 “X” 或 “Y” 开头的产品代码。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> products <span class="keyword">WHERE</span> product_code <span class="keyword">LIKE</span> <span class="string">&#x27;[^XY]%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="LIMIT语句"><a href="#LIMIT语句" class="headerlink" title="LIMIT语句"></a>LIMIT语句</h1><h2 id="语句定义-3"><a href="#语句定义-3" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 LIMIT 子句用于限制由 SELECT 语句返回的数据数量。</p>
+<h2 id="语法结构"><a href="#语法结构" class="headerlink" title="语法结构"></a>语法结构</h2><p>LIMIT语句的语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, columnN </span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line">LIMIT [<span class="keyword">no</span> <span class="keyword">of</span> <span class="keyword">rows</span>]</span><br></pre></td></tr></table></figure>
+
+<p>下面是 LIMIT 子句与 OFFSET 子句一起使用时的语法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, columnN </span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line">LIMIT [<span class="keyword">no</span> <span class="keyword">of</span> <span class="keyword">rows</span>] <span class="keyword">OFFSET</span> [<span class="type">row</span> num]</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例-3"><a href="#代码示例-3" class="headerlink" title="代码示例"></a>代码示例</h2><p>只返回6行数据：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY LIMIT <span class="number">6</span>;</span><br></pre></td></tr></table></figure>
+
+<p>从一个特定的偏移开始提取记录。如从第三位开始提取 3 个记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY LIMIT <span class="number">3</span> <span class="keyword">OFFSET</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="ORDER-BY语句"><a href="#ORDER-BY语句" class="headerlink" title="ORDER BY语句"></a>ORDER BY语句</h1><h2 id="语句定义-4"><a href="#语句定义-4" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 ORDER BY 子句是用来基于一个或多个列按升序或降序顺序排列数据。</p>
+<h2 id="语法结构-1"><a href="#语法结构-1" class="headerlink" title="语法结构"></a>语法结构</h2><p>ASC 默认值，从小到大，升序排列<br>DESC 从大到小，降序排列</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span><span class="operator">-</span>list </span><br><span class="line"><span class="keyword">FROM</span> table_name </span><br><span class="line">[<span class="keyword">WHERE</span> <span class="keyword">condition</span>] </span><br><span class="line">[<span class="keyword">ORDER</span> <span class="keyword">BY</span> column1, column2, .. columnN] [<span class="keyword">ASC</span> <span class="operator">|</span> <span class="keyword">DESC</span>];</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例-4"><a href="#代码示例-4" class="headerlink" title="代码示例"></a>代码示例</h2><p>将工资升序排列：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">ORDER</span> <span class="keyword">BY</span> SALARY <span class="keyword">ASC</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="GROUP-BY语句"><a href="#GROUP-BY语句" class="headerlink" title="GROUP BY语句"></a>GROUP BY语句</h1><h2 id="语句定义-5"><a href="#语句定义-5" class="headerlink" title="语句定义"></a>语句定义</h2><p>SQLite 的 GROUP BY 子句用于与 SELECT 语句一起使用，来对相同的数据进行分组。<br>在 SELECT 语句中，GROUP BY 子句放在 WHERE 子句之后，放在 ORDER BY 子句之前。</p>
+<h2 id="语法结构-2"><a href="#语法结构-2" class="headerlink" title="语法结构"></a>语法结构</h2><p>GROUP BY 子句必须放在 WHERE 子句中的条件之后，必须放在 ORDER BY 子句之前。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span><span class="operator">-</span>list</span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line"><span class="keyword">WHERE</span> [ conditions ]</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> column1, column2....columnN</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> column1, column2....columnN</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例-5"><a href="#代码示例-5" class="headerlink" title="代码示例"></a>代码示例</h2><p>将求出年龄相同的人的工资总总和：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite<span class="operator">&gt;</span> <span class="keyword">SELECT</span> AGE, <span class="built_in">SUM</span>(SALARY) <span class="keyword">FROM</span> COMPANY <span class="keyword">GROUP</span> <span class="keyword">BY</span> AGE;</span><br></pre></td></tr></table></figure>
+
+<h1 id="HAVING语句"><a href="#HAVING语句" class="headerlink" title="HAVING语句"></a>HAVING语句</h1><h2 id="语句定义-6"><a href="#语句定义-6" class="headerlink" title="语句定义"></a>语句定义</h2><p>HAVING 子句允许指定条件来过滤将出现在最终结果中的分组结果。<br>WHERE 子句在所选列上设置条件，而 HAVING 子句则在由 GROUP BY 子句创建的分组上设置条件。</p>
+<h2 id="语法结构-3"><a href="#语法结构-3" class="headerlink" title="语法结构"></a>语法结构</h2><p>HAVING 子句在 SELECT 查询中的位置：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line"><span class="keyword">HAVING</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span></span><br></pre></td></tr></table></figure>
+
+<p>在一个查询中，HAVING 子句必须放在 GROUP BY 子句之后，必须放在 ORDER BY 子句之前。下面是包含 HAVING 子句的 SELECT 语句的语法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2</span><br><span class="line"><span class="keyword">FROM</span> table1, table2</span><br><span class="line"><span class="keyword">WHERE</span> [ conditions ]</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> column1, column2</span><br><span class="line"><span class="keyword">HAVING</span> [ conditions ]</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> column1, column2</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例-6"><a href="#代码示例-6" class="headerlink" title="代码示例"></a>代码示例</h2><p>显示名称计数小于 2 的所有记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlite <span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">count</span>(name) <span class="operator">&lt;</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="DISTINCT关键字"><a href="#DISTINCT关键字" class="headerlink" title="DISTINCT关键字"></a>DISTINCT关键字</h1><h2 id="关键字定义"><a href="#关键字定义" class="headerlink" title="关键字定义"></a>关键字定义</h2><p>SQLite 的 DISTINCT 关键字与 SELECT 语句一起使用，来消除所有重复的记录，并只获取唯一一次记录。<br>有可能出现一种情况，在一个表中有多个重复的记录。当提取这样的记录时，DISTINCT 关键字就显得特别有意义，它只获取唯一一次记录，而不是获取重复记录。</p>
+<h2 id="语法结构-4"><a href="#语法结构-4" class="headerlink" title="语法结构"></a>语法结构</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> column1, column2,.....columnN </span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line"><span class="keyword">WHERE</span> [<span class="keyword">condition</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码示例-7"><a href="#代码示例-7" class="headerlink" title="代码示例"></a>代码示例</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> <span class="operator">*</span> <span class="keyword">FROM</span> COMPANY;</span><br></pre></td></tr></table></figure>
+
+<p>如果COMPANY表有重复数据，则重复数据只出现一次。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SQLite3/">SQLite3</a><a class="post-meta__tags" href="/tags/DQL%E8%AF%AD%E5%8F%A5/">DQL语句</a><a class="post-meta__tags" href="/tags/select/">select</a><a class="post-meta__tags" href="/tags/like/">like</a><a class="post-meta__tags" href="/tags/blob/">blob</a><a class="post-meta__tags" href="/tags/order-by/">order by</a><a class="post-meta__tags" href="/tags/group-by/">group by</a><a class="post-meta__tags" href="/tags/limit/">limit</a><a class="post-meta__tags" href="/tags/having/">having</a><a class="post-meta__tags" href="/tags/distinct/">distinct</a></div><div class="post_share"><div class="social-share" data-image="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/04/26/SQLite3-DML%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DML语句基本使用"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/80.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SQLite3-DML语句基本使用</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/04/26/SQLite3-DDL%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DDL语句基本使用"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/79.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-26</div><div class="title">SQLite3-DDL语句基本使用</div></div></a></div><div><a href="/2024/04/26/SQLite3-DML%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DML语句基本使用"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/80.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-26</div><div class="title">SQLite3-DML语句基本使用</div></div></a></div><div><a href="/2024/04/25/SQLite3-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" title="SQLite3-基本操作"><img class="cover" src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/78.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-25</div><div class="title">SQLite3-基本操作</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">刘嘉骅</div><div class="author-info__description">未经审视的生活不值得过,未经挑战的人生不值得活</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">79</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">189</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/QiuhuaSoft"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最近在学C#和Asp.net core，会多分享一些学习进度。C#参考了刘铁猛老师和杨中科老师的教学视频，感谢两位老师的无私奉献让我可以学习到这门编程语言，参考书籍推荐《C#图解教程》《ASP.NET Core技术内幕与项目实战》都是很好的学习用书。JavaScript参考了阮一峰老师的《ES6标准入门》和博客，内容干货很多，非常适合想要深入学习JS的朋友。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SELECT%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.</span> <span class="toc-text">SELECT语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LIKE%E8%AF%AD%E5%8F%A5"><span class="toc-number">2.</span> <span class="toc-text">LIKE语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-1"><span class="toc-number">2.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">2.2.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GLOB%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.</span> <span class="toc-text">GLOB语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-2"><span class="toc-number">3.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-2"><span class="toc-number">3.2.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LIMIT%E8%AF%AD%E5%8F%A5"><span class="toc-number">4.</span> <span class="toc-text">LIMIT语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-3"><span class="toc-number">4.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84"><span class="toc-number">4.2.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-3"><span class="toc-number">4.3.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ORDER-BY%E8%AF%AD%E5%8F%A5"><span class="toc-number">5.</span> <span class="toc-text">ORDER BY语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-4"><span class="toc-number">5.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84-1"><span class="toc-number">5.2.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-4"><span class="toc-number">5.3.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GROUP-BY%E8%AF%AD%E5%8F%A5"><span class="toc-number">6.</span> <span class="toc-text">GROUP BY语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-5"><span class="toc-number">6.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84-2"><span class="toc-number">6.2.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-5"><span class="toc-number">6.3.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HAVING%E8%AF%AD%E5%8F%A5"><span class="toc-number">7.</span> <span class="toc-text">HAVING语句</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89-6"><span class="toc-number">7.1.</span> <span class="toc-text">语句定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84-3"><span class="toc-number">7.2.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-6"><span class="toc-number">7.3.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DISTINCT%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">8.</span> <span class="toc-text">DISTINCT关键字</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%AE%9A%E4%B9%89"><span class="toc-number">8.1.</span> <span class="toc-text">关键字定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84-4"><span class="toc-number">8.2.</span> <span class="toc-text">语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-7"><span class="toc-number">8.3.</span> <span class="toc-text">代码示例</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/04/26/SQLite3-DQL%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2/" title="SQLite3-DQL基本查询"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SQLite3-DQL基本查询"/></a><div class="content"><a class="title" href="/2024/04/26/SQLite3-DQL%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2/" title="SQLite3-DQL基本查询">SQLite3-DQL基本查询</a><time datetime="2024-04-26T01:26:50.000Z" title="发表于 2024-04-26 09:26:50">2024-04-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/04/26/SQLite3-DML%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DML语句基本使用"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/80.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SQLite3-DML语句基本使用"/></a><div class="content"><a class="title" href="/2024/04/26/SQLite3-DML%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DML语句基本使用">SQLite3-DML语句基本使用</a><time datetime="2024-04-26T00:45:37.000Z" title="发表于 2024-04-26 08:45:37">2024-04-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/04/26/SQLite3-DDL%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DDL语句基本使用"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/79.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SQLite3-DDL语句基本使用"/></a><div class="content"><a class="title" href="/2024/04/26/SQLite3-DDL%E8%AF%AD%E5%8F%A5%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="SQLite3-DDL语句基本使用">SQLite3-DDL语句基本使用</a><time datetime="2024-04-25T23:51:47.000Z" title="发表于 2024-04-26 07:51:47">2024-04-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/04/25/SQLite3-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" title="SQLite3-基本操作"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/78.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SQLite3-基本操作"/></a><div class="content"><a class="title" href="/2024/04/25/SQLite3-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" title="SQLite3-基本操作">SQLite3-基本操作</a><time datetime="2024-04-25T01:08:03.000Z" title="发表于 2024-04-25 09:08:03">2024-04-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/04/24/Python-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" title="Python-网络请求"><img src="/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/77.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Python-网络请求"/></a><div class="content"><a class="title" href="/2024/04/24/Python-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" title="Python-网络请求">Python-网络请求</a><time datetime="2024-04-24T09:15:06.000Z" title="发表于 2024-04-24 17:15:06">2024-04-24</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/images/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/81.webp')"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By 刘嘉骅</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
