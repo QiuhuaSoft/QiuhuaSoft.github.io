@@ -4,6 +4,85 @@
   
     
     <entry>
+      <title>Vite-环境变量</title>
+      <link href="/2024/09/04/Vite-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
+      <url>/2024/09/04/Vite-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
+      
+        <content type="html"><![CDATA[<h1 id="更好的配置Vite"><a href="#更好的配置Vite" class="headerlink" title="更好的配置Vite"></a>更好的配置Vite</h1><p>vite.config.js文件是在node环境下运行的，vite会将es模块化语法替换为commonjs模块化语法，所以我们可以使用import xxx from xxx的方式来写。<br>创建vite.config.js文件，文件内部写法如下：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig, optimizeDeps &#125; <span class="keyword">from</span><span class="string">&quot;vite&quot;</span>;</span><br><span class="line">exportdefault <span class="title function_">defineConfig</span>(<span class="function">(<span class="params">&#123; command &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>)</span><br><span class="line">  <span class="comment">//command:&quot;build/serve&quot;</span></span><br><span class="line">  <span class="keyword">if</span> (command == <span class="string">&quot;build&quot;</span>) &#123;</span><br><span class="line">    <span class="comment">//生产环境的配置</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">optimizeDeps</span>: [], <span class="comment">//写在数组里面的依赖不进行依赖预处理</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//开发环境的配置</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><h1 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1><p>vite使用dotenv来配置环境变量，dotenv会读取.env文件，并将.env文件中的配置注入process对象身上，但是vite考虑到一些冲突，所以不会直接把环境变量放到process上。如：root和envDir，vite可以通过envDir来配置环境变量的文件地址，故在defineConfig的函数变量内部读取process.env是没有意义的。不过可以通过loadEnv函数来解决这个问题。<br>loadEnv做了以下内容：<br>直接读取.env文件的配置内容将其放到一个对象中<br>会将传进来的mode值进行拼接：”.env.development”。并根据我们配置的路径找到对应的配置文件并将.env和.env.xxx的配置内容进行拼接</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig, loadEnv, optimizeDeps &#125; <span class="keyword">from</span> <span class="string">&quot;vite&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(<span class="function">(<span class="params">&#123; command, mode &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">//command:&quot;build/serve&quot;</span></span><br><span class="line">  <span class="keyword">let</span> env = <span class="title function_">loadEnv</span>(mode, process.<span class="title function_">cwd</span>());</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(env);</span><br><span class="line">  <span class="keyword">if</span> (command == <span class="string">&quot;build&quot;</span>) &#123;</span><br><span class="line">    <span class="comment">//生产环境的配置</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">optimizeDeps</span>: [], <span class="comment">//写在数组里面的依赖不进行依赖预处理</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//开发环境的配置</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><p>.env：默认情况下读取的环境变量，开发和生产等环境均可使用<br>.env.development：开发环境用到的环境变量<br>.env.production：生产环境用到的环境变量</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm run dev</span><br><span class="line">相当于：</span><br><span class="line">npm run dev --mode development</span><br></pre></td></tr></table></figure><p>客户端：vite会将环境变量注入到import.meta.env中<br>node环境：通过loadEnv函数返回值读取<br>注意：如果客户端想使用环境变量，环境变量的名字必须使用VITE开头，若想修改前缀可以在vite.config.js中使用envPrefix配置。</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(<span class="function">(<span class="params">&#123; command, mode &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">envPrefix</span>:<span class="string">&quot;QIUHUA_&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> Vite </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Vite </tag>
+            
+            <tag> 环境变量 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Vite-Vite做了什么事</title>
+      <link href="/2024/09/04/Vite-Vite%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%E4%BA%8B/"/>
+      <url>/2024/09/04/Vite-Vite%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%E4%BA%8B/</url>
+      
+        <content type="html"><![CDATA[<h1 id="构建工具是什么"><a href="#构建工具是什么" class="headerlink" title="构建工具是什么"></a>构建工具是什么</h1><p>1、企业开发中可能涉及以下内容：<br>TypeScript：tsc<br>Vue&#x2F;React：vue-complier、react-complier<br>Less&#x2F;Sass：less-loader、sass-loader<br>语法降级：babel<br>体积压缩：uglifyjs<br>浏览器只认识css、js、html，每次修改代码都需要通过以上工具将所有代码重新编译一遍，非常麻烦，Vite帮我们解决了这个问题。<br>2、直接支持从node_modles中引包，解决CommonJs模块化和ES6模块化不兼容的问题。<br>3、热更新<br>4、自带开发服务器，解决跨域问题。</p><h1 id="Vite对比WebPack"><a href="#Vite对比WebPack" class="headerlink" title="Vite对比WebPack"></a>Vite对比WebPack</h1><p>WebPack：分析出文件的所有导入与导出，将CommonJs模块化和ES6模块化通过webpack_require函数变成统一的模块化代码，并包裹成立即执行函数。这意味着它将所有的文件都读了一遍，项目启动速度会非常慢，但是可以兼容浏览器端和服务器端。<br>Vite：基于ES6模块化不支持CommmonJs模块化（新版本好像支持了），所以不需要把所有文件都读一遍，启动速度非常快。</p><h1 id="Vite脚手架和Vite的区别"><a href="#Vite脚手架和Vite的区别" class="headerlink" title="Vite脚手架和Vite的区别"></a>Vite脚手架和Vite的区别</h1><p>当执行：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn create vite</span><br></pre></td></tr></table></figure><p>帮我们全局安装create-vite<br>直接运行bin目录下的执行配置<br>关系：create-vite内置了vite，就想vue-cli内置了webpack一样，create-vite配置模板并设置最佳实践的配置。</p><h1 id="Vite预加载"><a href="#Vite预加载" class="headerlink" title="Vite预加载"></a>Vite预加载</h1><p>问题1：当我们打开一个网页，浏览器会通过查询有多少个es6引入与导出来确定发出多少请求来获取.js文件（commonjs没这个要求，因为commonjs是工作在node环境下的），当引入和导出的文件数很多时，浏览器就会发出多个网络请求，这很离谱。<br>问题2：npm安装的包会通过层层向上的方式进行查找，在开发环境中当然没问题，但是生产环境中必须使用相对路径或绝对路径，这种机制就不太好用了。<br>问题3：不同第三方包的导入和导出形式不同，有些是commonjs模块化有些是es模块化。<br>Vite做了一些处理：<br>Vite会找到对应依赖，然后调用esbuild将其他规范代码转为es规范代码，然后放到当前目录下&#x2F;node_modules中，解决了不同的第三方包的导出格式不同的问题，由于将所有的包都打包到node_modules中方便路径补全与重写。<br>Vite将导入和导出的代码集成到一个或几个文件中，解决了网络多包传输的性能问题。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Vite </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Vite </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Python-Modbus通信</title>
+      <link href="/2024/08/04/Python-Modbus%E9%80%9A%E4%BF%A1/"/>
+      <url>/2024/08/04/Python-Modbus%E9%80%9A%E4%BF%A1/</url>
+      
+        <content type="html"><![CDATA[<h1 id="PyModbus库"><a href="#PyModbus库" class="headerlink" title="PyModbus库"></a>PyModbus库</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>PyModbus广泛用于基于Python语言进行Modbus通信，该库支持使用异步和同步两种方式进行调用且函数使用方式没有任何区别。<br>PyModbus支持ModbusRTU、ModbusTCP、ModbusTLS、ModbusUDP四种连接方式，本文主要介绍RTU与TCP的通信方式。</p><h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>ModbusTCP通信方式如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pymodbus.client <span class="keyword">import</span> ModbusTcpClient</span><br><span class="line"></span><br><span class="line">client = ModbusTcpClient(<span class="string">&#x27;MyDevice.lan&#x27;</span>)   <span class="comment"># Create client object</span></span><br><span class="line">client.connect()                           <span class="comment"># connect to device, reconnect automatically</span></span><br><span class="line">client.write_coil(<span class="number">1</span>, <span class="literal">True</span>, slave=<span class="number">1</span>)        <span class="comment"># set information in device</span></span><br><span class="line">result = client.read_coils(<span class="number">2</span>, <span class="number">3</span>, slave=<span class="number">1</span>)  <span class="comment"># get information from device</span></span><br><span class="line"><span class="built_in">print</span>(result.bits[<span class="number">0</span>])                      <span class="comment"># use information</span></span><br><span class="line">client.close()                             <span class="comment"># Disconnect device</span></span><br></pre></td></tr></table></figure><p>简单函数调用不论是读、写还是诊断调用的返回结果都是统一的，常用诊断方式如下所示：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    res = <span class="keyword">await</span> client.read_coils(<span class="number">1</span>, <span class="number">1</span>, slave=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">except</span> ModbusException <span class="keyword">as</span> exc:</span><br><span class="line">    _logger.error(<span class="string">f&quot;ERROR: exception in pymodbus <span class="subst">&#123;exc&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">raise</span> exc</span><br><span class="line"><span class="keyword">if</span> res.isError():</span><br><span class="line">    _logger.error(<span class="string">&quot;ERROR: pymodbus returned an error!&quot;</span>)</span><br><span class="line">    <span class="keyword">raise</span> ModbusException(txt)</span><br></pre></td></tr></table></figure><p>在读取状态下res.bits为线圈或输入寄存器的值，res.registers为其他的值。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Python </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> Modbus </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SQLite3-事务</title>
       <link href="/2024/05/28/SQLite3-%E4%BA%8B%E5%8A%A1/"/>
       <url>/2024/05/28/SQLite3-%E4%BA%8B%E5%8A%A1/</url>
@@ -695,7 +774,7 @@
       <link href="/2024/02/07/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-npm%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/"/>
       <url>/2024/02/07/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F-npm%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/</url>
       
-        <content type="html"><![CDATA[<h1 id="使用npm"><a href="#使用npm" class="headerlink" title="使用npm"></a>使用npm</h1><p>小程序使用npm有一些限制：<br>1、不支持依赖于nodejs内置库的包<br>2、不支持依赖于浏览器内置对象的包<br>3、不支持依赖于C++插件的包</p><h1 id="Vant-Weapp"><a href="#Vant-Weapp" class="headerlink" title="Vant Weapp"></a>Vant Weapp</h1><p>有赞前端团队开源的小程序UI组件库，使用MIT开源许可协议。<br>1、npm i @vant&#x2F;weapp -S –production<br>2、将 app.json 中的 “style”: “v2” 去除，小程序的新版基础组件强行加上了许多样式，难以覆盖，不关闭将造成部分组件样式混乱。<br>3、开发者工具创建的项目，miniprogramRoot 默认为 miniprogram，package.json 在其外部，npm 构建无法正常工作。<br>需要手动在 project.config.json 内添加如下配置，使开发者工具可以正确索引到 npm 依赖的位置。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;setting&quot;: &#123;</span><br><span class="line">    ...</span><br><span class="line">    &quot;packNpmManually&quot;: true,</span><br><span class="line">    &quot;packNpmRelationList&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;packageJsonPath&quot;: &quot;./package.json&quot;,</span><br><span class="line">        &quot;miniprogramNpmDistDir&quot;: &quot;./miniprogram/&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>4、打开微信开发者工具，点击 工具 -&gt; 构建 npm，并勾选 使用 npm 模块 选项，构建完成后，即可引入组件。<br>5、在app.json或页面.json文件中的usingComponents中添加要使用的组件，然后使用即可。</p><h2 id="CSS自定义变量"><a href="#CSS自定义变量" class="headerlink" title="CSS自定义变量"></a>CSS自定义变量</h2><h3 id="定义变量"><a href="#定义变量" class="headerlink" title="定义变量"></a>定义变量</h3><p>使用”–”（双横线）+变量名即可定义变量，不过要注意变量的作用域，比如定义在body标签的变量可以被body内的h1标签访问。但是定义在body内h1的变量不能被body访问。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">html&#123;</span><br><span class="line">    --my-bg-color:#efefef;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="使用自定义变量"><a href="#使用自定义变量" class="headerlink" title="使用自定义变量"></a>使用自定义变量</h3><p>在要使用的地方通过var(变量名)使用变量值。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">h1&#123;</span><br><span class="line">    color:var(--my-bg-color);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="设置Vant主题样式"><a href="#设置Vant主题样式" class="headerlink" title="设置Vant主题样式"></a>设置Vant主题样式</h2><p>可以在app.wxss中，写入CSS变量即可对全局生效</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//微信小程序最顶层标签是page</span><br><span class="line">page&#123;</span><br><span class="line">    --button-danger-background-color:#C00000;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>至于Vant定义的变量叫什么名字，可以在官方文档的定制主题-&gt;配置文件中查到。</p><h1 id="API-Promise化"><a href="#API-Promise化" class="headerlink" title="API Promise化"></a>API Promise化</h1><p>小程序异步的API都是基于回调函数实现的，容易造成回调地狱的问题。我们需要将这些API转为Promise，就可以使用async await了。</p><h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><p>1、安装miniprogram-api-promise<br>npm install –save <a href="mailto:&#109;&#x69;&#110;&#x69;&#112;&#114;&#x6f;&#103;&#114;&#x61;&#109;&#45;&#x61;&#x70;&#105;&#x2d;&#x70;&#x72;&#x6f;&#109;&#x69;&#115;&#101;&#x40;&#49;&#x2e;&#48;&#46;&#52;">&#109;&#x69;&#110;&#x69;&#112;&#114;&#x6f;&#103;&#114;&#x61;&#109;&#45;&#x61;&#x70;&#105;&#x2d;&#x70;&#x72;&#x6f;&#109;&#x69;&#115;&#101;&#x40;&#49;&#x2e;&#48;&#46;&#52;</a><br>2、构建npm<br>3、在app.js中</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//引入</span><br><span class="line">import &#123; promisifyAll &#125; from &#x27;miniprogram-api-promise&#x27;;</span><br><span class="line">//自定义p属性和wxp变量，这个p变量可以在每个页面访问到</span><br><span class="line">const wxp = wx.p=&#123;&#125;;</span><br><span class="line">//将wx的API挂载到wxp上</span><br><span class="line">promisifyAll(wx,wxp);</span><br></pre></td></tr></table></figure><p>4、使用<br>在需要的地方，比如获取用户列表信息</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">async getUserListAsync()&#123;</span><br><span class="line">  let &#123;data:res&#125; = await wx.pwx.request(&#123;</span><br><span class="line">    url: &#x27;https://xxx.com/get/userList&#x27;,</span><br><span class="line">    method:&quot;GET&quot;,</span><br><span class="line">    data:&#123;</span><br><span class="line">        page:1,</span><br><span class="line">        size:10</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  console.log(res)</span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure><h1 id="全局数据共享"><a href="#全局数据共享" class="headerlink" title="全局数据共享"></a>全局数据共享</h1><p>类似Vuex。<br>微信小程序里可以使用mobx-miniprogram配合mobx-miniprogram-bindings实现数据共享。<br>mobx-miniprogram用来创建Store实例对象<br>mobx-miniprogram-bindings用来把Store中的共享数据或方法，绑定到组件或页面中使用。</p><h2 id="创建store实例"><a href="#创建store实例" class="headerlink" title="创建store实例"></a>创建store实例</h2><p>创建store文件夹，在文件夹内创建store.js文件<br>store.js：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import &#123;action, observable&#125; from &quot;mobx-miniprogram&quot;</span><br><span class="line">export const store = observable(&#123;</span><br><span class="line">  numA:1,</span><br><span class="line">  numB:2,</span><br><span class="line">  //计算属性，类似于vuex的getter</span><br><span class="line">  get sum()&#123;</span><br><span class="line">    return this.numA+this.numB</span><br><span class="line">  &#125;,</span><br><span class="line">  //函数需要用action创建</span><br><span class="line">  updataNumA:action(function(step)&#123;</span><br><span class="line">    this.numA += step;</span><br><span class="line">  &#125;),</span><br><span class="line">  updataNumB:action(function(step)&#123;</span><br><span class="line">    this.numB += step;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><h2 id="绑定到页面"><a href="#绑定到页面" class="headerlink" title="绑定到页面"></a>绑定到页面</h2><p>1、在需要用store的页面导入</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#123;createStoreBindings&#125; from &quot;mobx-miniprogram-bindings&quot;</span><br><span class="line">import &#123;store&#125; from &#x27;../../store/store&#x27;</span><br></pre></td></tr></table></figure><p>2、在onLoad的时候通过createStoreBindings函数将store绑定到页面上</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">onLoad(options) &#123;</span><br><span class="line">    //将需要使用的store的数据绑定到this身上</span><br><span class="line">    //返回值可以用来在销毁页面时做清理工作</span><br><span class="line">    this.storeBindings = createStoreBindings(this,&#123;</span><br><span class="line">      store,</span><br><span class="line">      //指定使用的数据</span><br><span class="line">      fields:[&quot;numA&quot;,&quot;numB&quot;,&quot;sum&quot;],</span><br><span class="line">      //指定使用的函数</span><br><span class="line">      actions:[&#x27;updateNumA&#x27;]</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>3、在onUnload的时候做清理工作</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onUnload() &#123;</span><br><span class="line">    this.storeBindings.destroyStoreBindings();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>4、使用store内的数据与函数<br>.wxml：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;van-button type=&quot;info&quot;&gt;&#123;&#123;numB&#125;&#125;&lt;/van-button&gt;</span><br><span class="line">&lt;van-button type=&quot;warning&quot;&gt;&#123;&#123;numA&#125;&#125;&lt;/van-button&gt;</span><br></pre></td></tr></table></figure><p>由于都绑定到了this上，所以直接使用就行。</p><h2 id="绑定到组件"><a href="#绑定到组件" class="headerlink" title="绑定到组件"></a>绑定到组件</h2><p>1、在需要用store的页面导入</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#123;storeBindingsBehavior&#125; from &quot;mobx-miniprogram-bindings&quot;</span><br><span class="line">import &#123;store&#125; from &#x27;../../store/store&#x27;</span><br></pre></td></tr></table></figure><p>2、提供behaviors数组<br>在Component配置对象中，通过behaviors配置项实现自动绑定</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">behaviors:[storeBindingsBehavior]</span><br></pre></td></tr></table></figure><p>3、提供storeBindings配置项<br>在Component配置对象中，通过storeBindings配置项指定需要的数据</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">storeBindings:&#123;</span><br><span class="line">  store,</span><br><span class="line">  //指定使用的数据</span><br><span class="line">  fields:&#123;</span><br><span class="line">    numA:()=&gt;store.numA,</span><br><span class="line">    numB:(store)=&gt;store.numB,</span><br><span class="line">    sum:&quot;sum&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  //指定使用的函数</span><br><span class="line">  actions:&#123;</span><br><span class="line">    updateNumB:&quot;updataNumB&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<h1 id="使用npm"><a href="#使用npm" class="headerlink" title="使用npm"></a>使用npm</h1><p>小程序使用npm有一些限制：<br>1、不支持依赖于nodejs内置库的包<br>2、不支持依赖于浏览器内置对象的包<br>3、不支持依赖于C++插件的包</p><h1 id="Vant-Weapp"><a href="#Vant-Weapp" class="headerlink" title="Vant Weapp"></a>Vant Weapp</h1><p>有赞前端团队开源的小程序UI组件库，使用MIT开源许可协议。<br>1、npm i @vant&#x2F;weapp -S –production<br>2、将 app.json 中的 “style”: “v2” 去除，小程序的新版基础组件强行加上了许多样式，难以覆盖，不关闭将造成部分组件样式混乱。<br>3、开发者工具创建的项目，miniprogramRoot 默认为 miniprogram，package.json 在其外部，npm 构建无法正常工作。<br>需要手动在 project.config.json 内添加如下配置，使开发者工具可以正确索引到 npm 依赖的位置。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;setting&quot;: &#123;</span><br><span class="line">    ...</span><br><span class="line">    &quot;packNpmManually&quot;: true,</span><br><span class="line">    &quot;packNpmRelationList&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;packageJsonPath&quot;: &quot;./package.json&quot;,</span><br><span class="line">        &quot;miniprogramNpmDistDir&quot;: &quot;./miniprogram/&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>4、打开微信开发者工具，点击 工具 -&gt; 构建 npm，并勾选 使用 npm 模块 选项，构建完成后，即可引入组件。<br>5、在app.json或页面.json文件中的usingComponents中添加要使用的组件，然后使用即可。</p><h2 id="CSS自定义变量"><a href="#CSS自定义变量" class="headerlink" title="CSS自定义变量"></a>CSS自定义变量</h2><h3 id="定义变量"><a href="#定义变量" class="headerlink" title="定义变量"></a>定义变量</h3><p>使用”–”（双横线）+变量名即可定义变量，不过要注意变量的作用域，比如定义在body标签的变量可以被body内的h1标签访问。但是定义在body内h1的变量不能被body访问。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">html&#123;</span><br><span class="line">    --my-bg-color:#efefef;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="使用自定义变量"><a href="#使用自定义变量" class="headerlink" title="使用自定义变量"></a>使用自定义变量</h3><p>在要使用的地方通过var(变量名)使用变量值。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">h1&#123;</span><br><span class="line">    color:var(--my-bg-color);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="设置Vant主题样式"><a href="#设置Vant主题样式" class="headerlink" title="设置Vant主题样式"></a>设置Vant主题样式</h2><p>可以在app.wxss中，写入CSS变量即可对全局生效</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//微信小程序最顶层标签是page</span><br><span class="line">page&#123;</span><br><span class="line">    --button-danger-background-color:#C00000;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>至于Vant定义的变量叫什么名字，可以在官方文档的定制主题-&gt;配置文件中查到。</p><h1 id="API-Promise化"><a href="#API-Promise化" class="headerlink" title="API Promise化"></a>API Promise化</h1><p>小程序异步的API都是基于回调函数实现的，容易造成回调地狱的问题。我们需要将这些API转为Promise，就可以使用async await了。</p><h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><p>1、安装miniprogram-api-promise<br>npm install –save <a href="mailto:&#x6d;&#105;&#110;&#x69;&#x70;&#x72;&#111;&#x67;&#x72;&#x61;&#109;&#45;&#x61;&#x70;&#105;&#45;&#112;&#114;&#x6f;&#109;&#x69;&#x73;&#101;&#x40;&#49;&#46;&#48;&#x2e;&#x34;">&#x6d;&#105;&#110;&#x69;&#x70;&#x72;&#111;&#x67;&#x72;&#x61;&#109;&#45;&#x61;&#x70;&#105;&#45;&#112;&#114;&#x6f;&#109;&#x69;&#x73;&#101;&#x40;&#49;&#46;&#48;&#x2e;&#x34;</a><br>2、构建npm<br>3、在app.js中</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//引入</span><br><span class="line">import &#123; promisifyAll &#125; from &#x27;miniprogram-api-promise&#x27;;</span><br><span class="line">//自定义p属性和wxp变量，这个p变量可以在每个页面访问到</span><br><span class="line">const wxp = wx.p=&#123;&#125;;</span><br><span class="line">//将wx的API挂载到wxp上</span><br><span class="line">promisifyAll(wx,wxp);</span><br></pre></td></tr></table></figure><p>4、使用<br>在需要的地方，比如获取用户列表信息</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">async getUserListAsync()&#123;</span><br><span class="line">  let &#123;data:res&#125; = await wx.pwx.request(&#123;</span><br><span class="line">    url: &#x27;https://xxx.com/get/userList&#x27;,</span><br><span class="line">    method:&quot;GET&quot;,</span><br><span class="line">    data:&#123;</span><br><span class="line">        page:1,</span><br><span class="line">        size:10</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  console.log(res)</span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure><h1 id="全局数据共享"><a href="#全局数据共享" class="headerlink" title="全局数据共享"></a>全局数据共享</h1><p>类似Vuex。<br>微信小程序里可以使用mobx-miniprogram配合mobx-miniprogram-bindings实现数据共享。<br>mobx-miniprogram用来创建Store实例对象<br>mobx-miniprogram-bindings用来把Store中的共享数据或方法，绑定到组件或页面中使用。</p><h2 id="创建store实例"><a href="#创建store实例" class="headerlink" title="创建store实例"></a>创建store实例</h2><p>创建store文件夹，在文件夹内创建store.js文件<br>store.js：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import &#123;action, observable&#125; from &quot;mobx-miniprogram&quot;</span><br><span class="line">export const store = observable(&#123;</span><br><span class="line">  numA:1,</span><br><span class="line">  numB:2,</span><br><span class="line">  //计算属性，类似于vuex的getter</span><br><span class="line">  get sum()&#123;</span><br><span class="line">    return this.numA+this.numB</span><br><span class="line">  &#125;,</span><br><span class="line">  //函数需要用action创建</span><br><span class="line">  updataNumA:action(function(step)&#123;</span><br><span class="line">    this.numA += step;</span><br><span class="line">  &#125;),</span><br><span class="line">  updataNumB:action(function(step)&#123;</span><br><span class="line">    this.numB += step;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><h2 id="绑定到页面"><a href="#绑定到页面" class="headerlink" title="绑定到页面"></a>绑定到页面</h2><p>1、在需要用store的页面导入</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#123;createStoreBindings&#125; from &quot;mobx-miniprogram-bindings&quot;</span><br><span class="line">import &#123;store&#125; from &#x27;../../store/store&#x27;</span><br></pre></td></tr></table></figure><p>2、在onLoad的时候通过createStoreBindings函数将store绑定到页面上</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">onLoad(options) &#123;</span><br><span class="line">    //将需要使用的store的数据绑定到this身上</span><br><span class="line">    //返回值可以用来在销毁页面时做清理工作</span><br><span class="line">    this.storeBindings = createStoreBindings(this,&#123;</span><br><span class="line">      store,</span><br><span class="line">      //指定使用的数据</span><br><span class="line">      fields:[&quot;numA&quot;,&quot;numB&quot;,&quot;sum&quot;],</span><br><span class="line">      //指定使用的函数</span><br><span class="line">      actions:[&#x27;updateNumA&#x27;]</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>3、在onUnload的时候做清理工作</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onUnload() &#123;</span><br><span class="line">    this.storeBindings.destroyStoreBindings();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>4、使用store内的数据与函数<br>.wxml：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;van-button type=&quot;info&quot;&gt;&#123;&#123;numB&#125;&#125;&lt;/van-button&gt;</span><br><span class="line">&lt;van-button type=&quot;warning&quot;&gt;&#123;&#123;numA&#125;&#125;&lt;/van-button&gt;</span><br></pre></td></tr></table></figure><p>由于都绑定到了this上，所以直接使用就行。</p><h2 id="绑定到组件"><a href="#绑定到组件" class="headerlink" title="绑定到组件"></a>绑定到组件</h2><p>1、在需要用store的页面导入</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#123;storeBindingsBehavior&#125; from &quot;mobx-miniprogram-bindings&quot;</span><br><span class="line">import &#123;store&#125; from &#x27;../../store/store&#x27;</span><br></pre></td></tr></table></figure><p>2、提供behaviors数组<br>在Component配置对象中，通过behaviors配置项实现自动绑定</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">behaviors:[storeBindingsBehavior]</span><br></pre></td></tr></table></figure><p>3、提供storeBindings配置项<br>在Component配置对象中，通过storeBindings配置项指定需要的数据</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">storeBindings:&#123;</span><br><span class="line">  store,</span><br><span class="line">  //指定使用的数据</span><br><span class="line">  fields:&#123;</span><br><span class="line">    numA:()=&gt;store.numA,</span><br><span class="line">    numB:(store)=&gt;store.numB,</span><br><span class="line">    sum:&quot;sum&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  //指定使用的函数</span><br><span class="line">  actions:&#123;</span><br><span class="line">    updateNumB:&quot;updataNumB&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -1000,8 +1079,8 @@
     
     <entry>
       <title>C#新语法</title>
-      <link href="/2024/01/03/C-%E6%96%B0%E8%AF%AD%E6%B3%95/"/>
-      <url>/2024/01/03/C-%E6%96%B0%E8%AF%AD%E6%B3%95/</url>
+      <link href="/2024/01/03/C#-%E6%96%B0%E8%AF%AD%E6%B3%95/"/>
+      <url>/2024/01/03/C#-%E6%96%B0%E8%AF%AD%E6%B3%95/</url>
       
         <content type="html"><![CDATA[<h1 id="顶级语句"><a href="#顶级语句" class="headerlink" title="顶级语句"></a>顶级语句</h1><p>1、直接在C#文件中直接编写入口方法的代码，不用类，不用Main。经典写法仍然支持。<br>2、同一个项目中只能有一个文件具有顶级语句。<br>3、顶级语句中可以直接使用await语法，也可以声明函数。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Console.WriteLine(&quot;Hello, World!&quot;);</span><br><span class="line">string res = await File.ReadAllTextAsync(&quot;d:/1.txt&quot;);</span><br><span class="line">test1();</span><br><span class="line">test2();</span><br><span class="line">static void test1() &#123;</span><br><span class="line">    Console.WriteLine(1);</span><br><span class="line">&#125;</span><br><span class="line">void test2() &#123;</span><br><span class="line">    Console.WriteLine(2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="全局using指令"><a href="#全局using指令" class="headerlink" title="全局using指令"></a>全局using指令</h1><p>1、将global修饰符添加到using前，这个命名空间就应用到整个项目，不用重复using。<br>2、通常穿件一个专门用来编写全局using代码的C#文件。<br>3、如果csproj中启用了&lt;ImplicitUsings&gt;enable&lt;&#x2F;ImplicitUsings&gt;，编译器会自动隐式增加对于System、System.Linq等常用命名空间的引入，不同各类型引入的命名空间也不一样。</p><h1 id="Using声明"><a href="#Using声明" class="headerlink" title="Using声明"></a>Using声明</h1><p>问题：<br>实现IDisposable接口的对象可以用using进行管理，如果一段代码中有很多非托管资源需要被释放的话，代码中就会存在着多个嵌套的using语句</p><h2 id="代码展示"><a href="#代码展示" class="headerlink" title="代码展示"></a>代码展示</h2><p>当实现了IDisposable&#x2F;IAsyncDisposable接口的类型的变量声明前加上using，当代码执行离开变量的作用域时，对象就会被释放。<br>新建一个继承IDisposable的类</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">namespace C_新语法 &#123;</span><br><span class="line">    internal class MyFIle : IDisposable &#123;</span><br><span class="line">        public void Dispose() &#123;</span><br><span class="line">            Console.WriteLine(&quot;MyFile Dispose&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>program.cs</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">using C_新语法;</span><br><span class="line">test();</span><br><span class="line">static void test() &#123;</span><br><span class="line">    using var myFile = new MyFIle();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="using声明的陷阱"><a href="#using声明的陷阱" class="headerlink" title="using声明的陷阱"></a>using声明的陷阱</h2><p>以下代码会报错，因为在写文件的过程中没有关闭文件就要读文件内容</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">using var fs = File.OpenWrite(&quot;d:/1.txt&quot;);</span><br><span class="line">using var writer = new StreamWriter(fs);</span><br><span class="line">writer.WriteLine(&quot;Hello&quot;);</span><br><span class="line">string s = File.ReadAllText(&quot;d:/1.txt&quot;);</span><br><span class="line">Console.WriteLine(s);</span><br></pre></td></tr></table></figure><h1 id="文件范围的命名空间声明"><a href="#文件范围的命名空间声明" class="headerlink" title="文件范围的命名空间声明"></a>文件范围的命名空间声明</h1><p>1、之前版本的C#中，类型必须定义在namespace中<br>2、可以改成以下写法，少用了一个大括号：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">namespace C_新语法;</span><br><span class="line">internal class MyFIle : IDisposable &#123;</span><br><span class="line">    public void Dispose() &#123;</span><br><span class="line">        Console.WriteLine(&quot;MyFile Dispose&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>使用的时候依然需要引入名称空间。</p><h1 id="可空引用类型"><a href="#可空引用类型" class="headerlink" title="可空引用类型"></a>可空引用类型</h1><p>1、csproj中&lt;Nullable&gt;enable&lt;Nullable&gt;启用可空引用类型检查。<br>2、在引用类型后添加”?”修饰符来声明这个类型是可空的。对于没有添加”?”修饰符的引用类型的变量，如果编译器发现存在为这个变量赋值null的可能性的时候，编译器会给出警告信息。</p><h1 id="init"><a href="#init" class="headerlink" title="init"></a>init</h1><p>如果想让一个属性只能在构造函数中赋值，可以将set改成init，这样在类中的其他函数也不能给这个属性赋值。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">internal class dog &#123;</span><br><span class="line">     public int Id &#123; get; private set; &#125;</span><br><span class="line">     public string Name &#123; get; init; &#125;</span><br><span class="line">     public dog(int id, string name) &#123;</span><br><span class="line">         this.Id = id;</span><br><span class="line">         this.Name = name;</span><br><span class="line">     &#125;</span><br><span class="line">     public void SetName() &#123;</span><br><span class="line">         this.Name = &quot;aaa&quot;;//报错</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><h1 id="record类型"><a href="#record类型" class="headerlink" title="record类型"></a>record类型</h1><p>record类型自动生成构造函数。<br>record类型使用Equals和&#x3D;&#x3D;会比较两个对象的内容而非地址。<br>record所有的属性都是只读的。<br>1、C#中的&#x3D;&#x3D;运算符默认是判断两个变量指向的是否是同一个对象，即使两个对象内容完全一样，也不相等。可以通过重写Equals方法、重写&#x3D;&#x3D;运算符等来解决这个问题，不过需要开发人员编写很多额外的代码。<br>2、在C#9中增加了记录（record）类型的语法，编译器会为我们自动生成Equals、GetHashcode等方法。<br>可以把record当成class来用：</p><h2 id="简单示范"><a href="#简单示范" class="headerlink" title="简单示范"></a>简单示范</h2><p>Person类：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">namespace C_新语法 &#123;</span><br><span class="line">    internal record Person(string FirstName,string LastName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Program.cs</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Person person1 = new Person(&quot;张&quot;,&quot;三&quot;);</span><br><span class="line">Person person2 = new Person(&quot;张&quot;, &quot;三&quot;);</span><br><span class="line">Console.WriteLine(person1.ToString());</span><br><span class="line">Console.WriteLine(person1==person2);//true</span><br><span class="line">Console.WriteLine(person1.Equals(person2));//true</span><br><span class="line">Console.WriteLine(Object.ReferenceEquals(person1,person2));//false，比较地址则为false</span><br></pre></td></tr></table></figure><h2 id="record深入理解"><a href="#record深入理解" class="headerlink" title="record深入理解"></a>record深入理解</h2><p>1、可以将record的部分属性设为可写的，可以使用以下方法，我们可以把普通的类改成record类，就可以让它自动生成ToString之类的方法了：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">internal record Person(string FirstName,string LastName) &#123;</span><br><span class="line">    public int age &#123; get; set; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这样age属性就是可读可写的了<br>2、默认生成的构造函数的行为不能修改，我们可以为类型提供多个构造方法，然后其他构造方法通过this调用默认的构造方法</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">internal record Person(string FirstName,string LastName) &#123;</span><br><span class="line">    public int age &#123; get; set; &#125;</span><br><span class="line">    public Person(string FirstName, string LastName,int age):this(FirstName,LastName) &#123; </span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>3、推荐使用只读属性的类型。这样的所有属性都为只读的类型叫做“不可变类型”，可以让程序逻辑简单，减少并发访问、状态管理等麻烦。</p><h2 id="对象的副本（with写法）"><a href="#对象的副本（with写法）" class="headerlink" title="对象的副本（with写法）"></a>对象的副本（with写法）</h2><p>1、record也是普通类，变量的赋值是引用的传递。这是和结构体不同之处。<br>2、生成一个对象的副本，这个对象的其他属性值与原对象的相同，只有一个或者少数几个属性改变。<br>麻烦的写法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Person p1 = new Person(&quot;张&quot;, &quot;三&quot;);</span><br><span class="line">Person p2 = new Person(p1.FirstName, p1.LastName);</span><br></pre></td></tr></table></figure><p>with写法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Person p1 = new Person(&quot;张&quot;, &quot;三&quot;);</span><br><span class="line">Person p2 = p1 with &#123; &#125;;//创建了p1的副本，地址不一样，内容完全一样</span><br><span class="line">Person p3 = p1 with &#123;LastName=&quot;四&quot;&#125;;//先创建p1的副本，然后修改了LastName属性，可以让部分属性不相同</span><br></pre></td></tr></table></figure>]]></content>
       
@@ -1424,11 +1503,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> WebSocket </tag>
             
@@ -1457,11 +1536,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 校验机制 </tag>
             
@@ -1490,11 +1569,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 托管服务 </tag>
             
@@ -1521,11 +1600,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> JWT </tag>
             
@@ -1552,11 +1631,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 标识框架 </tag>
             
@@ -1583,11 +1662,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -1616,11 +1695,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 筛选器 </tag>
             
@@ -1649,11 +1728,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> EFCore </tag>
             
@@ -1680,11 +1759,11 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
             
             <tag> .Net </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> 配置系统 </tag>
             
@@ -1742,9 +1821,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -1775,9 +1854,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -1806,9 +1885,9 @@
       
         <tags>
             
-            <tag> Asp.NetCore </tag>
-            
             <tag> C# </tag>
+            
+            <tag> Asp.NetCore </tag>
             
             <tag> .NET </tag>
             
@@ -2310,11 +2389,11 @@
       
         <tags>
             
+            <tag> ArrayList </tag>
+            
             <tag> C# </tag>
             
             <tag> .Net </tag>
-            
-            <tag> ArrayList </tag>
             
         </tags>
       
